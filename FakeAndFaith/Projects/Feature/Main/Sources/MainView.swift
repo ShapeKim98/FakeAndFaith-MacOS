@@ -41,6 +41,8 @@ public struct MainView: View {
                 store.send(.aboutButtonTapped(proxy), animation: .default)
             } videoButtonAction: {
                 
+            } noticeView: {
+                EmptyView()
             }
         }
     }

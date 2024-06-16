@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import FeatureMainDetail
 
 @main
 struct MainDetailDemoApp: App {
     var body: some Scene {
         WindowGroup {
             // TODO: 루트 뷰 추가
+            MainDetailView(
+                store: .init(initialState: .init(), reducer: {
+                    MainDetailFeature()
+                }))
         }
     }
 }
