@@ -1,6 +1,6 @@
 //
 //  Project.stencil.swift
-//  ProjectDescriptionHelpers
+//  Packages
 //
 //  Created by 김도형 on 6/16/24.
 //
@@ -9,22 +9,21 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(
-    name: "App",
+    name: "CoreKit",
     targets: [
         .target(
-            name: "App",
+            name: "CoreKit",
             destinations: .appDestinations,
-            product: .app,
-            bundleId: .moduleBundleId(name: "App"),
+            // TODO: 프로젝트에 맞는 product로 변경해야 함
+            product: .staticLibrary,
+            bundleId: .moduleBundleId(name: "CoreKit"),
             deploymentTargets: .appMinimunTarget,
             infoPlist: .file(path: .relativeToRoot("Projects/App/Resources/FAKEandFAITH-info.plist")),
             sources: ["Sources/**"],
-            resources: ["Resources/**"],
             dependencies: [
                 // TODO: 의존성 추가
-                .project(target: "FeatureMain", path: .relativeToRoot("Projects/Feature")),
-                .project(target: "FeatureMainDetail", path: .relativeToRoot("Projects/Feature")),
-                .project(target: "FeatureEyeDetail", path: .relativeToRoot("Projects/Feature")),
+                .project(target: "ThirdPartyLib", path: .relativeToRoot("Projects/ThirdPartyLib")),
+                .project(target: "Util", path: .relativeToRoot("Projects/Util"))
             ]
         )
     ]
