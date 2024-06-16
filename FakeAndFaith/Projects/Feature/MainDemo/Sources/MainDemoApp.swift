@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
+import FeatureMain
 
 @main
 struct MainDemoApp: App {
     var body: some Scene {
         WindowGroup {
             // TODO: 루트 뷰 추가
+            MainView(store: Store(initialState: MainFeature.State()) {
+                MainFeature()
+            })
         }
     }
 }

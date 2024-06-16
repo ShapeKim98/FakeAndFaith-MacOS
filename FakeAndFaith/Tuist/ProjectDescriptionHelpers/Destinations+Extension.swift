@@ -8,5 +8,5 @@
 import ProjectDescription
 
 public extension Destinations {
-    static let appDestinations: Set<Destination> = [.iPad, .mac]
+    static let appDestinations: Set<Destination> = [.iPad, .macWithiPadDesign]
 }
