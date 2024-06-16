@@ -7,53 +7,62 @@
 
 import SwiftUI
 
-struct NavigationBarModifier: ViewModifier {
+struct NavigationBarModifier<T: View>: ViewModifier {
     private var backButtonAction: (() -> Void)?
     private var aboutButtonAction: (() -> Void)?
     private var videoButtonAction: (() -> Void)?
     
+    @ViewBuilder
+    private var noticeView: T
+    
     init(
         backButtonAction: (() -> Void)? = nil,
         aboutButtonAction: (() -> Void)?,
-        videoButtonAction: (() -> Void)?) {
-        self.backButtonAction = backButtonAction
-        self.aboutButtonAction = aboutButtonAction
-        self.videoButtonAction = videoButtonAction
-    }
+        videoButtonAction: (() -> Void)?,
+        noticeView: @escaping () -> T) {
+            self.backButtonAction = backButtonAction
+            self.aboutButtonAction = aboutButtonAction
+            self.videoButtonAction = videoButtonAction
+            self.noticeView = noticeView()
+        }
     
     func body(content: Content) -> some View {
         content
             .ignoresSafeArea()
             .overlay(alignment: .top) {
-                HStack {
-                    Spacer()
-                    
-                    title
-                    
-                    Spacer()
-                }
-                .overlay {
-                    HStack(spacing: 30) {
-                        if (backButtonAction != nil) {
-                            backButton
-                        }
-                        
+                VStack(spacing: 0) {
+                    HStack {
                         Spacer()
                         
-                        aboutButton
+                        title
                         
-                        videoButton
+                        Spacer()
                     }
+                    .overlay {
+                        HStack(spacing: 30) {
+                            if (backButtonAction != nil) {
+                                backButton
+                            }
+                            
+                            Spacer()
+                            
+                            aboutButton
+                            
+                            videoButton
+                        }
+                    }
+                    .padding(.horizontal, 100)
+                    .padding(.vertical, 28)
+                    .foregroundStyle(.white)
+                    .background(alignment: .bottom) {
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundStyle(.main)
+                    }
+                    .background(.black)
+                    
+                    noticeView
                 }
-                .padding(.horizontal, 100)
-                .padding(.vertical, 28)
-                .foregroundStyle(.white)
-                .background(alignment: .bottom) {
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundStyle(.main)
-                }
-                .background(.black)
             }
     }
     
@@ -91,13 +100,15 @@ struct NavigationBarModifier: ViewModifier {
 }
 
 public extension View {
-    func navigationBar(
+    func navigationBar<T: View>(
         backButtonAction: (() -> Void)? = nil,
         aboutButtonAction: (() -> Void)?,
-        videoButtonAction: (() -> Void)?) -> some View {
-        modifier(NavigationBarModifier(
-            backButtonAction: backButtonAction,
-            aboutButtonAction: aboutButtonAction,
-            videoButtonAction: videoButtonAction))
-    }
+        videoButtonAction: (() -> Void)?,
+        noticeView: @escaping () -> T) -> some View {
+            modifier(NavigationBarModifier(
+                backButtonAction: backButtonAction,
+                aboutButtonAction: aboutButtonAction,
+                videoButtonAction: videoButtonAction,
+                noticeView: noticeView))
+        }
 }
