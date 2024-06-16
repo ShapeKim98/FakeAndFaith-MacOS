@@ -22,4 +22,5 @@ public extension Image {
     static let earSymbol = DSKitAsset.earSymbol.swiftUIImage
     static let handSymbol = DSKitAsset.handSymbol.swiftUIImage
     static let logo = DSKitAsset.logo.swiftUIImage
+    static let eyeEarHandImage = DSKitAsset.eyeEarHand.swiftUIImage
 }
