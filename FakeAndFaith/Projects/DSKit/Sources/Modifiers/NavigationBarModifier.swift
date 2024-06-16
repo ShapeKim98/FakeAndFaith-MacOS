@@ -45,7 +45,7 @@ struct NavigationBarModifier: ViewModifier {
                         videoButton
                     }
                 }
-                .padding(.horizontal, 52)
+                .padding(.horizontal, 100)
                 .padding(.vertical, 28)
                 .foregroundStyle(.white)
                 .background(alignment: .bottom) {
