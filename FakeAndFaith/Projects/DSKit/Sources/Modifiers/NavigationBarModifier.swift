@@ -104,7 +104,7 @@ public extension View {
         backButtonAction: (() -> Void)? = nil,
         aboutButtonAction: (() -> Void)?,
         videoButtonAction: (() -> Void)?,
-        noticeView: @escaping () -> T) -> some View {
+        noticeView: @escaping () -> T = { EmptyView() }) -> some View {
             modifier(NavigationBarModifier(
                 backButtonAction: backButtonAction,
                 aboutButtonAction: aboutButtonAction,

@@ -7,12 +7,15 @@
 
 import SwiftUI
 import ComposableArchitecture
+import WaterfallGrid
 import DSKit
+import Domain
 
 public struct MainDetailView: View {
     @Namespace private var heroAnimation
     
-    private let store: StoreOf<MainDetailFeature>
+    @Perception.Bindable
+    private var store: StoreOf<MainDetailFeature>
     
     public init(store: StoreOf<MainDetailFeature>) {
         self.store = store
@@ -20,13 +23,13 @@ public struct MainDetailView: View {
     
     public var body: some View {
         WithPerceptionTracking {
-            ZStack {
+            Group {
+                
                 if store.currentPage == .none {
                     VStack {
                         Spacer()
                         
                         buttons
-                            .matchedGeometryEffect(id: "buttons", in: heroAnimation)
                         
                         Spacer()
                     }
@@ -34,7 +37,17 @@ public struct MainDetailView: View {
                     ScrollView {
                         VStack {
                             buttons
-                                .matchedGeometryEffect(id: "buttons", in: heroAnimation)
+                            
+                            if store.currentPage == .hand {
+                                HStack(spacing: 24) {
+                                    writingTextField
+                                    
+                                    writingSubmitButton
+                                }
+                                .padding(.top, 65)
+                            }
+                            
+                            writingGrid
                             
                             Spacer()
                         }
@@ -75,6 +88,7 @@ public struct MainDetailView: View {
             
             Spacer()
         }
+        .matchedGeometryEffect(id: "buttons", in: heroAnimation)
     }
     
     @ViewBuilder
@@ -113,7 +127,84 @@ public struct MainDetailView: View {
                 }
             }
         }
+    
+    private var eye: some View {
+        Image.eyeIcon
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 350)
+            .gesture(
+                DragGesture()
+                    .onChanged({ dragValue in
+                        store.send(.eyeDragging(dragValue))
+                    })
+                    .onEnded({ dragValue in
+                        store.send(.eyeDragged)
+                    }))
+            .offset(x: store.eyeOffsetX, y: store.eyeOffsetY)
+    }
+    
+    private var writingGrid: some View {
+        HStack {
+            Spacer(minLength: 200)
+            
+            ZStack {
+                WaterfallGrid(store.writings) { writing in
+                    WritingCell(writing: writing)
+                        .foregroundStyle(.main)
+                }
+                .gridStyle(columns: 3, spacing: 56)
+                .scrollOptions(direction: .vertical)
+                .padding(.top, 77)
+                
+                WaterfallGrid(store.truth) { writing in
+                    WritingCell(writing: writing)
+                        .foregroundStyle(.black)
+                }
+                .gridStyle(columns: 3, spacing: 56)
+                .scrollOptions(direction: .vertical)
+                .padding(.top, 65)
+            }
+            .allowsHitTesting(false)
+            .background(alignment: .topLeading) {
+                if store.currentPage == .eye {
+                    eye
+                }
+            }
+            
+            Spacer(minLength: 200)
+        }
+    }
+    
+    private var writingTextField: some View {
+        TextField("", text: $store.writingContentText.sending(\.writingContentTextChanged))
+            .frame(width: 800, height: 40)
+            .background {
+                Rectangle()
+                    .stroke(.main, lineWidth: 2)
+            }
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+            .font(.minionPro.regular.swiftUIFont(size: 20))
+            .foregroundStyle(.main)
+            .onSubmit {
+                store.send(.writingSubmitButtonTapped, animation: .smooth(duration: 1))
+            }
+    }
+    
+    private var writingSubmitButton: some View {
+        Button {
+            store.send(.writingSubmitButtonTapped, animation: .smooth(duration: 1))
+        } label: {
+            Image.nextIcon
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 40)
+        }
+    }
 }
+
+
 
 #Preview {
     MainDetailView(
