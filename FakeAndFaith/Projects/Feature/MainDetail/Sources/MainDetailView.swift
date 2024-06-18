@@ -7,7 +7,9 @@
 
 import SwiftUI
 import ComposableArchitecture
+import Perception
 import WaterfallGrid
+import FeatureEyeDetail
 import DSKit
 import Domain
 
@@ -24,7 +26,6 @@ public struct MainDetailView: View {
     public var body: some View {
         WithPerceptionTracking {
             Group {
-                
                 if store.currentPage == .none {
                     VStack {
                         Spacer()
@@ -57,6 +58,18 @@ public struct MainDetailView: View {
             }
             .fadeAnimation(delay: 0.5)
             .background(.black)
+            .overlay {
+                if store.showEyeDetail {
+                    EyeDetailView(store: .init(initialState: .init(), reducer: {
+                        EyeDetailFeature { delegate in
+                            switch delegate {
+                            case .close:
+                                store.send(.closeEyeDetail, animation: .smooth(duration: 1))
+                            }
+                        }
+                    }))
+                }
+            }
             .navigationBar {
                 store.send(.backButtonTapped, animation: .smooth(duration: 1.5))
             } aboutButtonAction: {
@@ -64,8 +77,12 @@ public struct MainDetailView: View {
             } videoButtonAction: {
                 store.send(.videoButtonTapped, animation: .smooth(duration: 1.5))
             } noticeView: {
-                NoticeView(title: .constant(store.noticeTitle))
-                    .opacity(store.currentPage != .none ? 1 : 0)
+                if store.showEyeDetail {
+                    eyeDetailNotice
+                } else {
+                    NoticeView(title: .constant(store.noticeTitle))
+                        .opacity(store.currentPage != .none ? 1 : 0)
+                }
             }
         }
     }
@@ -201,6 +218,20 @@ public struct MainDetailView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 40)
         }
+    }
+    
+    private var eyeDetailNotice: some View {
+        HStack {
+            Spacer()
+            
+            Text("진실은 바라보기 불편합니다")
+                .font(.minionPro.bold.swiftUIFont(size: 16))
+                .foregroundStyle(.main)
+                .padding(.vertical, 12)
+            
+            Spacer()
+        }
+        .background(.black)
     }
 }
 
