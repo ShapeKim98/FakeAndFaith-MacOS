@@ -77,11 +77,13 @@ public struct MainDetailView: View {
             } videoButtonAction: {
                 store.send(.videoButtonTapped, animation: .smooth(duration: 1.5))
             } noticeView: {
-                if store.showEyeDetail {
-                    eyeDetailNotice
-                } else {
-                    NoticeView(title: .constant(store.noticeTitle))
-                        .opacity(store.currentPage != .none ? 1 : 0)
+                Group {
+                    if store.showEyeDetail {
+                        eyeDetailNotice
+                    } else {
+                        NoticeView(title: .constant(store.noticeTitle))
+                            .opacity(store.currentPage != .none ? 1 : 0)
+                    }
                 }
             }
         }
@@ -169,18 +171,24 @@ public struct MainDetailView: View {
                 WaterfallGrid(store.writings) { writing in
                     WritingCell(writing: writing)
                         .foregroundStyle(.main)
+                        .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                 }
                 .gridStyle(columns: 3, spacing: 56)
                 .scrollOptions(direction: .vertical)
                 .padding(.top, 77)
                 
-                WaterfallGrid(store.truth) { writing in
-                    WritingCell(writing: writing)
-                        .foregroundStyle(.black)
+                Button {
+                    store.send(.truthWritingsTapped, animation: .smooth(duration: 1))
+                } label: {
+                    WaterfallGrid(store.truth) { writing in
+                        WritingCell(writing: writing)
+                            .foregroundStyle(.black)
+                    }
+                    .gridStyle(columns: 3, spacing: 56)
+                    .scrollOptions(direction: .vertical)
+                    .padding(.top, 65)
                 }
-                .gridStyle(columns: 3, spacing: 56)
-                .scrollOptions(direction: .vertical)
-                .padding(.top, 65)
+                .disabled(store.currentPage != .eye)
             }
             .allowsHitTesting(false)
             .background(alignment: .topLeading) {
