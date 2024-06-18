@@ -10,7 +10,7 @@ import SwiftUI
 public extension Image {
     static let arrowRightIcon = DSKitAsset.arrowRightIcon.swiftUIImage
     static let eyeIcon = DSKitAsset.eyeIcon.swiftUIImage
-    static let nextIcon = DSKitAsset.eyeIcon.swiftUIImage
+    static let nextIcon = DSKitAsset.nextIcon.swiftUIImage
     static let pauseIcon = DSKitAsset.pauseIcon.swiftUIImage
     static let playIcon = DSKitAsset.playIcon.swiftUIImage
     static let xIcon = DSKitAsset.xIcon.swiftUIImage

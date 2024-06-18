@@ -1,30 +1,68 @@
 //
-//  App.stencil.swift
-//  ProjectDescriptionHelpers
+//  WritingUseCase.swift
+//  Domain
 //
-//  Created by 김도형 on 6/16/24.
+//  Created by 김도형 on 6/18/24.
 //
 
-import SwiftUI
-import FeatureMainDetail
-import Domain
+import Foundation
+import Dependencies
 
-@main
-struct MainDetailDemoApp: App {
-    var body: some Scene {
-        WindowGroup {
-            // TODO: 루트 뷰 추가
-            MainDetailView(
-                store: .init(initialState: .init(writings: Writing.mock), reducer: {
-                    MainDetailFeature()
-                }))
+public class WritingUseCase {
+    // TODO: 로컬 데이터 추가 시 Data Context로 변경
+    private var context: [Writing] = []
+    
+    public init(context: [Writing]) {
+        self.context = context
+    }
+    
+    public func fetch(id: UUID) -> Writing? {
+        let result = self.context.first { writing in
+            writing.id == id
         }
+        
+        return result
+    }
+    
+    public func fetches() -> [Writing] {
+        return self.context
+    }
+    
+    public func save(content: String) -> Bool {
+        self.context.append(.init(content: content))
+        
+        return true
+    }
+    
+    public func delete(id: UUID) -> Bool {
+        self.context.removeAll { writing in
+            writing.id == id
+        }
+        
+        return true
+    }
+    
+    public func deleteAll() -> Bool {
+        self.context.removeAll()
+        
+        return true
     }
 }
 
-extension Writing {
-    static var mock: [Writing] {
-        return [
+extension DependencyValues {
+    public var writingUseCase: WritingUseCase {
+        get { self[WritingUseCase.self] }
+        set { self[WritingUseCase.self] = newValue }
+    }
+}
+
+extension WritingUseCase: DependencyKey {
+    public static var liveValue: WritingUseCase {
+        return .init(context: [])
+    }
+    
+    public static var previewValue: WritingUseCase {
+        .init(context: [
             .init(content: """
             Faith transcends the boundaries of the tangible world. It allows people to connect with the divine, the eternal, and the infinite. This connection can inspire acts of kindness, compassion, and selflessness, as believers strive to embody the values and virtues of their faith.
             """),
@@ -49,6 +87,6 @@ extension Writing {
             .init(content: """
             Freedom of religion' is freedom of the inside. Freedom of religion' is an essential freedom of man, which is freedom of the inside, like 'freedom of thought' and 'freedom of thought'. Law does not regulate 'thought', it regulates 'action'. Therefore, no matter how much Korea has freedom of religion, illegal or illegal activities caused by the actions of any religion (organization) cannot be neglected as freedom of religion. Basic legal common sense is necessary to understand this, and it is easy to see that freedom of religion stems from freedom of the inside even with basic common sense.
             """)
-        ]
+        ])
     }
 }

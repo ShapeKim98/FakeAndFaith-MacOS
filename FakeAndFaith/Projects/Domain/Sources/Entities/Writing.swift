@@ -1,29 +1,20 @@
 //
-//  App.stencil.swift
-//  ProjectDescriptionHelpers
+//  Writing.swift
+//  Domain
 //
-//  Created by 김도형 on 6/16/24.
+//  Created by 김도형 on 6/18/24.
 //
 
-import SwiftUI
-import FeatureMainDetail
-import Domain
+import Foundation
 
-@main
-struct MainDetailDemoApp: App {
-    var body: some Scene {
-        WindowGroup {
-            // TODO: 루트 뷰 추가
-            MainDetailView(
-                store: .init(initialState: .init(writings: Writing.mock), reducer: {
-                    MainDetailFeature()
-                }))
-        }
+public struct Writing: Identifiable {
+    public init(content: String) {
+        self.content = content
     }
-}
-
-extension Writing {
-    static var mock: [Writing] {
+    
+    public let id: UUID = .init()
+    public var content: String
+    public static var truth: [Writing] {
         return [
             .init(content: """
             Faith transcends the boundaries of the tangible world. It allows people to connect with the divine, the eternal, and the infinite. This connection can inspire acts of kindness, compassion, and selflessness, as believers strive to embody the values and virtues of their faith.
