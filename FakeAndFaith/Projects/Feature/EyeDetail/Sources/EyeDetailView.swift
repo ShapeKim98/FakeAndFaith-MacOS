@@ -22,29 +22,34 @@ public struct EyeDetailView: View {
                 people
                     .frame(height: proxy.size.height)
                 
+                Spacer()
+                
                 title
+                
+                Spacer()
                 
                 description
                 
-                closeButton
-                
                 Spacer()
+                
+                closeButton
             }
+            .padding(.top, 120)
+            .background(.main)
+            .ignoresSafeArea()
         }
-        .ignoresSafeArea()
-        .background(.main)
     }
     
     private var people: some View {
         Image.peopleImage
             .resizable()
-            .aspectRatio(contentMode: .fill)
+            .aspectRatio(contentMode: .fit)
     }
     
     private var title: some View {
         VStack {
             Text("Faith, Religion,\nand the Danger\nof Cults")
-                .font(.minionPro.bold.swiftUIFont(size: 36))
+                .font(.minionPro.bold.swiftUIFont(size: 60))
                 .foregroundStyle(.black)
                 .multilineTextAlignment(.leading)
                 .padding(.top, 120)
@@ -61,7 +66,7 @@ public struct EyeDetailView: View {
             Text("""
         Faith is a profound and personal aspect of human experience. It is the belief in something greater than oneself, often tied to religious or spiritual convictions. Faith provides comfort and guidance, especially in times of uncertainty and hardship. It can unite people, fostering a sense of community and shared purpose. Faith is not merely about blind belief; it involves trust and confidence in the principles and teachings of one's faith tradition. It is a journey of continual growth, reflection, and understanding. Through faith, individuals find meaning and hope, helping them navigate the complexities of life with a sense of purpose and direction.
         """)
-            .font(.minionPro.bold.swiftUIFont(size: 8))
+            .font(.minionPro.bold.swiftUIFont(size: 14))
             .foregroundStyle(.black)
             .multilineTextAlignment(.leading)
             .frame(width: 320)
@@ -84,6 +89,7 @@ public struct EyeDetailView: View {
             Spacer()
         }
         .padding(.top, 60)
+        .padding(.trailing, 100)
     }
 }
 

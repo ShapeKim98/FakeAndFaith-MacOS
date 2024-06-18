@@ -31,9 +31,8 @@ public struct EyeDetailFeature {
         Reduce { state, action in
             switch action {
             case .closeButtonTapped:
-                return .run { send in
-                    self.delegateSend?(.close)
-                }
+                self.delegateSend?(.close)
+                return .none
             }
         }
     }

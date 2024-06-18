@@ -76,9 +76,8 @@ public struct MainDetailFeature {
                 return .none
             case .backButtonTapped:
                 guard state.currentPage != .none else {
-                    return .run { send in
-                        self.delegateSend?(.showMain)
-                    }
+                    self.delegateSend?(.showMain)
+                    return .none
                 }
                 
                 state.noticeTitle = ""
