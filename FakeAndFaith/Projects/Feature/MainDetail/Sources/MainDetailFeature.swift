@@ -7,13 +7,18 @@
 
 import SwiftUI
 import ComposableArchitecture
+import FeatureEyeDetail
 import Domain
 
 @Reducer
 public struct MainDetailFeature {
     @Dependency(\.writingUseCase) var writingUseCase
     
-    public init() {}
+    private var delegateSend: ((Action.Delegate) -> Void)?
+    
+    public init(delegateSend: ((Action.Delegate) -> Void)? = nil) {
+        self.delegateSend = delegateSend
+    }
     
     @ObservableState
     public struct State {
@@ -25,6 +30,7 @@ public struct MainDetailFeature {
         var eyeOffsetY: CGFloat = 0
         var eyeIsDragging: Bool = false
         var writingContentText: String = ""
+        var showEyeDetail: Bool = false
         
         public init(writings: [Writing] = []) {
             self.writings = writings
@@ -43,6 +49,12 @@ public struct MainDetailFeature {
         case mainDetailViewOnAppeared
         case writingContentTextChanged(String)
         case writingSubmitButtonTapped
+        case truthWritingsTapped
+        case closeEyeDetail
+        
+        public enum Delegate {
+            case showMain
+        }
     }
     
     public var body: some ReducerOf<Self> {
@@ -64,6 +76,7 @@ public struct MainDetailFeature {
                 return .none
             case .backButtonTapped:
                 guard state.currentPage != .none else {
+                    self.delegateSend?(.showMain)
                     return .none
                 }
                 
@@ -101,6 +114,12 @@ public struct MainDetailFeature {
                 return .none
             case .writingContentTextChanged(let text):
                 state.writingContentText = text
+                return .none
+            case .truthWritingsTapped:
+                state.showEyeDetail = true
+                return .none
+            case .closeEyeDetail:
+                state.showEyeDetail = false
                 return .none
             }
         }

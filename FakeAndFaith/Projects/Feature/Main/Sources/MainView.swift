@@ -75,7 +75,7 @@ public struct MainView: View {
     
     private var enterButton: some View {
         Button {
-            
+            store.send(.enterButtonTapped)
         } label: {
             HStack(spacing: 12) {
                 Text("입장하기")

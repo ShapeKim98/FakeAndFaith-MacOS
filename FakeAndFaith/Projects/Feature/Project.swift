@@ -32,29 +32,6 @@ let mainDemoTarget: Target = .target(
         .target(mainTarget)
     ])
 
-let mainDetailTarget: Target = .target(
-    name: "FeatureMainDetail",
-    destinations: .appDestinations,
-    product: .framework,
-    bundleId: .moduleBundleId(name: "FeatureMainDetail"),
-    deploymentTargets: .appMinimunTarget,
-    sources: ["MainDetail/Sources/**"],
-    dependencies: [
-        .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
-        .project(target: "DSKit", path: .relativeToRoot("Projects/DSKit"))
-    ])
-
-let mainDetailDemoTarget: Target = .target(
-    name: "FeatureMainDetailDemo",
-    destinations: .appDestinations,
-    product: .app,
-    bundleId: .moduleBundleId(name: "FeatureMainDetailDemo"),
-    infoPlist: .file(path: .relativeToRoot("Projects/App/Resources/FAKEandFAITH-info.plist")),
-    sources: ["MainDetailDemo/Sources/**"],
-    dependencies: [
-        .target(mainDetailTarget)
-    ])
-
 let eyeDetailTarget: Target = .target(
     name: "FeatureEyeDetail",
     destinations: .appDestinations,
@@ -76,6 +53,30 @@ let eyeDetailDemoTarget: Target = .target(
     sources: ["EyeDetailDemo/Sources/**"],
     dependencies: [
         .target(eyeDetailTarget)
+    ])
+
+let mainDetailTarget: Target = .target(
+    name: "FeatureMainDetail",
+    destinations: .appDestinations,
+    product: .framework,
+    bundleId: .moduleBundleId(name: "FeatureMainDetail"),
+    deploymentTargets: .appMinimunTarget,
+    sources: ["MainDetail/Sources/**"],
+    dependencies: [
+        .target(eyeDetailTarget),
+        .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
+        .project(target: "DSKit", path: .relativeToRoot("Projects/DSKit"))
+    ])
+
+let mainDetailDemoTarget: Target = .target(
+    name: "FeatureMainDetailDemo",
+    destinations: .appDestinations,
+    product: .app,
+    bundleId: .moduleBundleId(name: "FeatureMainDetailDemo"),
+    infoPlist: .file(path: .relativeToRoot("Projects/App/Resources/FAKEandFAITH-info.plist")),
+    sources: ["MainDetailDemo/Sources/**"],
+    dependencies: [
+        .target(mainDetailTarget)
     ])
 
 let project = Project(

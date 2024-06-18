@@ -21,7 +21,6 @@ struct WritingCell: View {
     var body: some View {
         Text(writing.content)
             .font(font)
-            .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
             .lineSpacing(8)
             .multilineTextAlignment(.leading)
             .frame(width: 460)
