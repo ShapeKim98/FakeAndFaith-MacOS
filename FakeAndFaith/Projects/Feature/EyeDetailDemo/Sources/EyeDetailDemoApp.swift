@@ -6,12 +6,16 @@
 //
 
 import SwiftUI
+import FeatureEyeDetail
 
 @main
 struct EyeDetailDemoApp: App {
     var body: some Scene {
         WindowGroup {
             // TODO: 루트 뷰 추가
+            EyeDetailView(store: .init(initialState: .init(), reducer: {
+                EyeDetailFeature()
+            }))
         }
     }
 }
