@@ -167,7 +167,7 @@ public struct MainDetailView: View {
         HStack {
             Spacer(minLength: 200)
             
-            ZStack {
+            ZStack(alignment: .top) {
                 WaterfallGrid(store.writings) { writing in
                     WritingCell(writing: writing)
                         .foregroundStyle(.main)
