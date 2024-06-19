@@ -8,6 +8,19 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
+let coreAudioPlayerTarget: Target = .target(
+    name: "CoreAudioPlayer",
+    destinations: .appDestinations,
+    product: .staticLibrary,
+    bundleId: .moduleBundleId(name: "CoreAudioPlayer"),
+    deploymentTargets: .appMinimunTarget,
+    sources: ["CoreAudioPlayer/Sources/**"],
+    resources: ["CoreAudioPlayer/Resources/**"],
+    dependencies: [
+        .project(target: "ThirdPartyLib", path: .relativeToRoot("Projects/ThirdPartyLib")),
+        .project(target: "Util", path: .relativeToRoot("Projects/Util"))
+    ])
+
 let project = Project(
     name: "CoreKit",
     targets: [
@@ -22,9 +35,9 @@ let project = Project(
             sources: ["Sources/**"],
             dependencies: [
                 // TODO: 의존성 추가
-                .project(target: "ThirdPartyLib", path: .relativeToRoot("Projects/ThirdPartyLib")),
-                .project(target: "Util", path: .relativeToRoot("Projects/Util"))
+                .target(coreAudioPlayerTarget)
             ]
-        )
+        ),
+        coreAudioPlayerTarget
     ]
 )

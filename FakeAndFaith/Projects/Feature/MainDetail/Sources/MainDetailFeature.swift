@@ -7,14 +7,18 @@
 
 import SwiftUI
 import ComposableArchitecture
+import Combine
 import FeatureEyeDetail
 import Domain
+import CoreAudioPlayer
 
 @Reducer
 public struct MainDetailFeature {
     @Dependency(\.writingUseCase) var writingUseCase
+    @Dependency(\.audioPlayer) var audioPlayer
     
     private var delegateSend: ((Action.Delegate) -> Void)?
+    private var cancellables = Set<AnyCancellable>()
     
     public init(delegateSend: ((Action.Delegate) -> Void)? = nil) {
         self.delegateSend = delegateSend
@@ -31,6 +35,7 @@ public struct MainDetailFeature {
         var eyeIsDragging: Bool = false
         var writingContentText: String = ""
         var showEyeDetail: Bool = false
+        var currentAudioIndex: Int = 0
         
         public init(writings: [Writing] = []) {
             self.writings = writings
@@ -51,6 +56,8 @@ public struct MainDetailFeature {
         case writingSubmitButtonTapped
         case truthWritingsTapped
         case closeEyeDetail
+        case playButtonTapped
+        case stopButtonTapped
         
         public enum Delegate {
             case showMain
@@ -120,6 +127,26 @@ public struct MainDetailFeature {
                 return .none
             case .closeEyeDetail:
                 state.showEyeDetail = false
+                return .none
+            case .playButtonTapped:
+                audioPlayer.currentIndexSubject
+                    .receive(on: DispatchQueue.main)
+                    .sink { value in
+                        state.currentAudioIndex = value
+                    }
+                    .store(in: &self.cancellables)
+                
+                audioPlayer.play(
+                    audioFiles: [
+                        "01번",
+                        "02번",
+                        "03번",
+                        "04번",
+                        "05번",
+                        "06번",
+                        "07번"
+                    ])
+                
                 return .none
             }
         }
