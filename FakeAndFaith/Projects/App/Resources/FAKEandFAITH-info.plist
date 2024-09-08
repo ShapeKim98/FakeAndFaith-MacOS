@@ -29,12 +29,6 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-		<string>processing</string>
-		<string>remote-notification</string>
-	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch</string>
 	<key>UIRequiredDeviceCapabilities</key>
