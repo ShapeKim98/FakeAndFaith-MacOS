@@ -10,11 +10,7 @@ import ComposableArchitecture
 
 @Reducer
 public struct MainFeature {
-    private var delegateSend: ((Action.Delegate) -> Void)?
-    
-    public init(delegateSend: ((Action.Delegate) -> Void)? = nil) {
-        self.delegateSend = delegateSend
-    }
+    public init() { }
     
     @ObservableState
     public struct State: Equatable {
@@ -24,6 +20,7 @@ public struct MainFeature {
     public enum Action {
         case enterButtonTapped
         case aboutButtonTapped(ScrollViewProxy)
+        case delegate(Delegate)
         public enum Delegate {
             case showMainDetail
         }
@@ -33,10 +30,11 @@ public struct MainFeature {
         Reduce { state, action in
             switch action {
             case .enterButtonTapped:
-                self.delegateSend?(.showMainDetail)
-                return .none
+                return .send(.delegate(.showMainDetail))
             case .aboutButtonTapped(let proxy):
                 proxy.scrollTo("about", anchor: .center)
+                return .none
+            case .delegate:
                 return .none
             }
         }

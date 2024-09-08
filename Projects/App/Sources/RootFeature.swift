@@ -15,25 +15,34 @@ struct RootFeature {
     init() {}
     
     @ObservableState
-    struct State {
-        var destination: Destination = .main
+    enum State {
+        case main(MainFeature.State)
+        case mainDetail(MainDetailFeature.State)
     }
     
     enum Action {
-        case showMain
-        case showMainDetail
+        case main(MainFeature.Action)
+        case mainDetail(MainDetailFeature.Action)
     }
     
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .showMain:
-                state.destination = .main
+            case .main(.delegate(.showMainDetail)):
+                state = .mainDetail(.init())
                 return .none
-            case .showMainDetail:
-                state.destination = .mainDetail
+            case .mainDetail(.delegate(.showMain)):
+                state = .main(.init())
+                return .none
+            case .main, .mainDetail:
                 return .none
             }
+        }
+        .ifCaseLet(\.main, action: \.main) {
+            MainFeature()
+        }
+        .ifCaseLet(\.mainDetail, action: \.mainDetail) {
+            MainDetailFeature()
         }
     }
 }

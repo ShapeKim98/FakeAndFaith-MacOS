@@ -14,11 +14,7 @@ import Domain
 public struct MainDetailFeature {
     @Dependency(\.writingUseCase) var writingUseCase
     
-    private var delegateSend: ((Action.Delegate) -> Void)?
-    
-    public init(delegateSend: ((Action.Delegate) -> Void)? = nil) {
-        self.delegateSend = delegateSend
-    }
+    public init() { }
     
     @ObservableState
     public struct State {
@@ -51,6 +47,7 @@ public struct MainDetailFeature {
         case writingSubmitButtonTapped
         case truthWritingsTapped
         case closeEyeDetail
+        case delegate(Delegate)
         
         public enum Delegate {
             case showMain
@@ -76,8 +73,7 @@ public struct MainDetailFeature {
                 return .none
             case .backButtonTapped:
                 guard state.currentPage != .none else {
-                    self.delegateSend?(.showMain)
-                    return .none
+                    return .send(.delegate(.showMain))
                 }
                 
                 state.noticeTitle = ""
@@ -120,6 +116,8 @@ public struct MainDetailFeature {
                 return .none
             case .closeEyeDetail:
                 state.showEyeDetail = false
+                return .none
+            case .delegate:
                 return .none
             }
         }
