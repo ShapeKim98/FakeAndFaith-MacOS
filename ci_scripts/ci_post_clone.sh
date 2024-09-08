@@ -8,8 +8,6 @@
 
 defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
 
-cd ..
-
 curl https://mise.jdx.dev/install.sh | sh
 
 mise install
