@@ -30,6 +30,13 @@ public struct EyeDetailView: View {
                 
                 description
                 
+//                Text("한글")
+//                    .font(.eulyoo1945.semiBold.swiftUIFont(size: 14)) +
+//                Text("en")
+//                    .font(.minionPro.semibold.swiftUIFont(size: 14))
+                
+                
+                
                 Spacer()
                 
                 closeButton
@@ -60,6 +67,8 @@ public struct EyeDetailView: View {
     
     private var description: some View {
         VStack {
+            Color.main
+            
             
             Spacer()
             
