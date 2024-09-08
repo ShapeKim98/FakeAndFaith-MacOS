@@ -12,7 +12,7 @@ curl https://mise.jdx.dev/install.sh | sh
 
 mise install
 
-cd FakeAndFaith
+cd ../FakeAndFaith/
 
 mise x tuist clean
 mise x tuist install
