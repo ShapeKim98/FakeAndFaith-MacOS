@@ -48,6 +48,10 @@ public struct MainDetailView: View {
                                 .padding(.top, 65)
                             }
                             
+                            if store.currentPage == .ear {
+                                playWritingButton
+                            }
+                            
                             writingGrid
                             
                             Spacer()
@@ -106,7 +110,8 @@ public struct MainDetailView: View {
     @ViewBuilder
     private func button(
         page: MainDetailFeature.Page,
-        action: @escaping () -> Void) -> some View {
+        action: @escaping () -> Void
+    ) -> some View {
             let isSelected = page == store.currentPage
             
             Button(action: action) {
@@ -164,7 +169,6 @@ public struct MainDetailView: View {
                 WaterfallGrid(store.writings) { writing in
                     WritingCell(writing: writing)
                         .foregroundStyle(.main)
-                        .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                 }
                 .gridStyle(columns: 3, spacing: 56)
                 .scrollOptions(direction: .vertical)
@@ -218,6 +222,23 @@ public struct MainDetailView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 40)
+        }
+    }
+    
+    private var playWritingButton: some View {
+        Button {
+            store.send(.playButtonTapped)
+        } label: {
+            Group {
+                if store.isPlayingTTSText {
+                    Image.pauseIcon
+                        .resizable()
+                        .frame(width: 40, height: 40)
+                } else {
+                    Image.playIcon
+                        .frame(width: 40, height: 40)
+                }
+            }
         }
     }
     

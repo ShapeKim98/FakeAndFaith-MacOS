@@ -44,6 +44,7 @@ struct RootFeature {
         }
         .ifCaseLet(\.mainDetail, action: \.mainDetail) {
             MainDetailFeature()
+                ._printChanges(.actionLabels)
         }
     }
 }

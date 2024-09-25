@@ -15,7 +15,7 @@ let project = Project(
             name: "DSKit",
             destinations: .appDestinations,
             // TODO: 프로젝트에 맞는 product로 변경해야 함
-            product: .staticFramework,
+            product: .framework,
             bundleId: .moduleBundleId(name: "DSKit"),
             deploymentTargets: .appMinimunTarget,
             infoPlist: .file(path: .relativeToRoot("Projects/App/Resources/FAKEandFAITH-info.plist")),
