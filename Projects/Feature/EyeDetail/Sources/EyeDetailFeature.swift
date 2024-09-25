@@ -9,11 +9,7 @@ import ComposableArchitecture
 
 @Reducer
 public struct EyeDetailFeature {
-    private let delegateSend: ((Action.Delegate) -> Void)?
-    
-    public init(delegateSend: ((Action.Delegate) -> Void)? = nil) {
-        self.delegateSend = delegateSend
-    }
+    public init() { }
     
     @ObservableState
     public struct State {
@@ -22,8 +18,9 @@ public struct EyeDetailFeature {
     
     public enum Action {
         case closeButtonTapped
+        case delegate(Delegate)
         public enum Delegate {
-        case close
+            case close
         }
     }
     
@@ -31,8 +28,10 @@ public struct EyeDetailFeature {
         Reduce { state, action in
             switch action {
             case .closeButtonTapped:
-                self.delegateSend?(.close)
+                return .send(.delegate(.close))
+            case .delegate:
                 return .none
+                
             }
         }
     }

@@ -12,13 +12,10 @@ import Domain
 
 @Reducer
 public struct MainDetailFeature {
-    @Dependency(\.writingUseCase) var writingUseCase
+    @Dependency(\.writingUseCase)
+    var writingUseCase
     
-    private var delegateSend: ((Action.Delegate) -> Void)?
-    
-    public init(delegateSend: ((Action.Delegate) -> Void)? = nil) {
-        self.delegateSend = delegateSend
-    }
+    public init() { }
     
     @ObservableState
     public struct State {
@@ -30,7 +27,9 @@ public struct MainDetailFeature {
         var eyeOffsetY: CGFloat = 0
         var eyeIsDragging: Bool = false
         var writingContentText: String = ""
-        var showEyeDetail: Bool = false
+        
+        @Presents
+        var eyeDetail: EyeDetailFeature.State?
         
         public init(writings: [Writing] = []) {
             self.writings = writings
@@ -51,6 +50,8 @@ public struct MainDetailFeature {
         case writingSubmitButtonTapped
         case truthWritingsTapped
         case closeEyeDetail
+        case delegate(Delegate)
+        case eyeDetail(EyeDetailFeature.Action)
         
         public enum Delegate {
             case showMain
@@ -76,8 +77,7 @@ public struct MainDetailFeature {
                 return .none
             case .backButtonTapped:
                 guard state.currentPage != .none else {
-                    self.delegateSend?(.showMain)
-                    return .none
+                    return .send(.delegate(.showMain))
                 }
                 
                 state.noticeTitle = ""
@@ -116,12 +116,21 @@ public struct MainDetailFeature {
                 state.writingContentText = text
                 return .none
             case .truthWritingsTapped:
-                state.showEyeDetail = true
+                state.eyeDetail = .init()
                 return .none
             case .closeEyeDetail:
-                state.showEyeDetail = false
+                state.eyeDetail = nil
+                return .none
+            case .delegate:
+                return .none
+            case .eyeDetail(.delegate(.close)):
+                return .send(.closeEyeDetail)
+            case .eyeDetail:
                 return .none
             }
+        }
+        .ifLet(\.eyeDetail, action: \.eyeDetail) {
+            EyeDetailFeature()
         }
     }
     

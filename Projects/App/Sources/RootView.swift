@@ -23,25 +23,15 @@ struct RootView: View {
     var body: some View {
         WithPerceptionTracking {
             Group {
-                switch store.destination {
+                switch store.state {
                 case .main:
-                    MainView(store: .init(initialState: .init(), reducer: {
-                        MainFeature { delegate in
-                            switch delegate {
-                            case .showMainDetail:
-                                store.send(.showMainDetail, animation: .smooth(duration: 2))
-                            }
-                        }
-                    }))
+                    if let store = store.scope(state: \.main, action: \.main) {
+                        MainView(store: store)
+                    }
                 case .mainDetail:
-                    MainDetailView(store: .init(initialState: .init(writings: Writing.mock), reducer: {
-                        MainDetailFeature { delegate in
-                            switch delegate {
-                            case .showMain:
-                                store.send(.showMain, animation: .smooth(duration: 2))
-                            }
-                        }
-                    }))
+                    if let store = store.scope(state: \.mainDetail, action: \.mainDetail) {
+                        MainDetailView(store: store)
+                    }
                 }
             }
         }
@@ -49,7 +39,7 @@ struct RootView: View {
 }
 
 #Preview {
-    RootView(store: .init(initialState: .init(), reducer: {
+    RootView(store: .init(initialState: .main(.init()), reducer: {
         RootFeature()
     }))
 }
