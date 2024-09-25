@@ -24,7 +24,7 @@ public struct MainDetailFeature {
     @ObservableState
     public struct State {
         var writings: [Writing]
-        var truth: [Writing] = Writing.truth.shuffled()
+        var truth: [Writing] = Writing.truth
         var currentPage: Page = .none
         var noticeTitle: String = ""
         var eyeOffsetX: CGFloat = 0
