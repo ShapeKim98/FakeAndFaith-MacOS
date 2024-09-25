@@ -16,19 +16,11 @@ public struct TTSClient {
 
 extension TTSClient: DependencyKey {
     public static var liveValue: TTSClient {
-        let speechSynthesizer = AVSpeechSynthesizer()
+        let ttsProvider = TTSProvider.shared
         
         return TTSClient(
-            play: { text in
-                let utterance = AVSpeechUtterance(string: text)
-                utterance.voice = AVSpeechSynthesisVoice(language: "en-US") // 음성 언어 설정 (예: 영어)
-                utterance.rate = 0.5 // 속도 조절 (0.0 ~ 1.0)
-                
-                speechSynthesizer.speak(utterance)
-            },
-            stop: {
-                speechSynthesizer.stopSpeaking(at: .immediate)
-            }
+            play: { await ttsProvider.play($0) },
+            stop: { ttsProvider.stop() }
         )
     }
 }

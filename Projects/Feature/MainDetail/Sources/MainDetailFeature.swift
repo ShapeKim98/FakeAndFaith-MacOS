@@ -9,11 +9,14 @@ import SwiftUI
 import ComposableArchitecture
 import FeatureEyeDetail
 import Domain
+import CoreKit
 
 @Reducer
 public struct MainDetailFeature {
     @Dependency(\.writingUseCase)
     var writingUseCase
+    @Dependency(\.ttsClient)
+    private var ttsClient
     
     public init() { }
     
