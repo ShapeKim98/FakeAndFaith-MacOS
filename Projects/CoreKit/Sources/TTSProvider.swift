@@ -14,15 +14,17 @@ final class TTSProvider: NSObject {
     
     private let speechSynthesizer = AVSpeechSynthesizer()
     
-    private var continuation: CheckedContinuation<Void, Never>?
+    private var continuation: CheckedContinuation<Bool, Never>?
+    private var isHasNext = true
     
     override init () {
         super.init()
         speechSynthesizer.delegate = self
     }
     
-    public func play(_ text: String) async {
-        await withCheckedContinuation { [weak self] continuation in
+    public func play(_ text: String) async -> Bool {
+        guard isHasNext else { return false }
+        return await withCheckedContinuation { [weak self] continuation in
             guard let `self` else { return }
             speak(text)
             self.continuation = continuation
@@ -30,6 +32,7 @@ final class TTSProvider: NSObject {
     }
     
     func speak(_ text: String) {
+        isHasNext = true
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US") // 음성 언어 설정 (예: 영어)
         utterance.rate = 0.5 // 속도 조절 (0.0 ~ 1.0)
@@ -38,7 +41,13 @@ final class TTSProvider: NSObject {
     }
     
     public func stop() {
+        isHasNext = false
         speechSynthesizer.stopSpeaking(at: .immediate)
+    }
+    
+    public func finished() {
+        isHasNext = true
+        print(isHasNext)
     }
 }
 
@@ -47,7 +56,8 @@ extension TTSProvider: AVSpeechSynthesizerDelegate {
         _ synthesizer: AVSpeechSynthesizer,
         didFinish utterance: AVSpeechUtterance
     ) {
-        continuation?.resume(returning: ())
+        print(isHasNext)
+        continuation?.resume(returning: isHasNext)
         continuation = nil
     }
 }

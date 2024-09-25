@@ -10,8 +10,9 @@ import AVFoundation
 import Dependencies
 
 public struct TTSClient {
-    public var play: (_ text: String) async -> Void
-    public var stop: () async -> Void
+    public var play: (_ text: String) async -> Bool
+    public var stop: () -> Void
+    public var finished: () -> Void
 }
 
 extension TTSClient: DependencyKey {
@@ -20,7 +21,8 @@ extension TTSClient: DependencyKey {
         
         return TTSClient(
             play: { await ttsProvider.play($0) },
-            stop: { ttsProvider.stop() }
+            stop: { ttsProvider.stop() },
+            finished: { ttsProvider.finished() }
         )
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+
 import ComposableArchitecture
 import FeatureEyeDetail
 import Domain
@@ -30,6 +31,8 @@ public struct MainDetailFeature {
         var eyeOffsetY: CGFloat = 0
         var eyeIsDragging: Bool = false
         var writingContentText: String = ""
+        var isPlayingTTSText: Bool = false
+        var playingTask: Task<Void, Never>?
         
         @Presents
         var eyeDetail: EyeDetailFeature.State?
@@ -55,10 +58,18 @@ public struct MainDetailFeature {
         case closeEyeDetail
         case delegate(Delegate)
         case eyeDetail(EyeDetailFeature.Action)
+        case playTTS
+        case stopTTS
+        case playButtonTapped
+        case cancelTTSStream
         
         public enum Delegate {
             case showMain
         }
+    }
+    
+    enum CancelId {
+        case ttsPlaying
     }
     
     public var body: some ReducerOf<Self> {
@@ -130,6 +141,45 @@ public struct MainDetailFeature {
                 return .send(.closeEyeDetail)
             case .eyeDetail:
                 return .none
+            case .playTTS:
+                guard !state.isPlayingTTSText else {
+                    return .none
+                }
+                state.isPlayingTTSText = true
+                let stream = AsyncStream<Bool> { continuation in
+                    Task { [ writings = state.writings ] in
+                        for writing in writings {
+                            let isHasNext = await ttsClient.play(writing.content)
+                            continuation.yield(isHasNext)
+                        }
+                        
+                        continuation.finish()
+                    }
+                }
+                
+                return .run { send in
+                    for await play in stream {
+                        guard play else {
+                            await send(.cancelTTSStream)
+                            break
+                        }
+                    }
+                    
+                    ttsClient.finished()
+                }
+                .cancellable(id: CancelId.ttsPlaying, cancelInFlight: true)
+            case .stopTTS:
+                state.isPlayingTTSText = false
+                ttsClient.stop()
+                return .none
+            case .playButtonTapped:
+                if state.isPlayingTTSText {
+                    return .send(.stopTTS)
+                } else {
+                    return .send(.playTTS)
+                }
+            case .cancelTTSStream:
+                return .cancel(id: CancelId.ttsPlaying)
             }
         }
         .ifLet(\.eyeDetail, action: \.eyeDetail) {

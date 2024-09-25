@@ -48,6 +48,10 @@ public struct MainDetailView: View {
                                 .padding(.top, 65)
                             }
                             
+                            if store.currentPage == .ear {
+                                playWritingButton
+                            }
+                            
                             writingGrid
                             
                             Spacer()
@@ -106,7 +110,8 @@ public struct MainDetailView: View {
     @ViewBuilder
     private func button(
         page: MainDetailFeature.Page,
-        action: @escaping () -> Void) -> some View {
+        action: @escaping () -> Void
+    ) -> some View {
             let isSelected = page == store.currentPage
             
             Button(action: action) {
@@ -218,6 +223,14 @@ public struct MainDetailView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 40)
+        }
+    }
+    
+    private var playWritingButton: some View {
+        Button {
+            store.send(.playButtonTapped)
+        } label: {
+            Text(store.isPlayingTTSText ? "stop" : "play")
         }
     }
     
