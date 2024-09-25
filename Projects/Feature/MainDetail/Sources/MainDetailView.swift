@@ -169,7 +169,6 @@ public struct MainDetailView: View {
                 WaterfallGrid(store.writings) { writing in
                     WritingCell(writing: writing)
                         .foregroundStyle(.main)
-                        .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                 }
                 .gridStyle(columns: 3, spacing: 56)
                 .scrollOptions(direction: .vertical)
@@ -230,7 +229,16 @@ public struct MainDetailView: View {
         Button {
             store.send(.playButtonTapped)
         } label: {
-            Text(store.isPlayingTTSText ? "stop" : "play")
+            Group {
+                if store.isPlayingTTSText {
+                    Image.pauseIcon
+                        .resizable()
+                        .frame(width: 40, height: 40)
+                } else {
+                    Image.playIcon
+                        .frame(width: 40, height: 40)
+                }
+            }
         }
     }
     
