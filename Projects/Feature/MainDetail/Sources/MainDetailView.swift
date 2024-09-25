@@ -59,15 +59,8 @@ public struct MainDetailView: View {
             .fadeAnimation(delay: 0.5)
             .background(.black)
             .overlay {
-                if store.showEyeDetail {
-                    EyeDetailView(store: .init(initialState: .init(), reducer: {
-                        EyeDetailFeature { delegate in
-                            switch delegate {
-                            case .close:
-                                store.send(.closeEyeDetail, animation: .smooth(duration: 1))
-                            }
-                        }
-                    }))
+                if let store = store.scope(state: \.eyeDetail, action: \.eyeDetail) {
+                    EyeDetailView(store: store)
                 }
             }
             .navigationBar {
@@ -78,7 +71,7 @@ public struct MainDetailView: View {
                 store.send(.videoButtonTapped, animation: .smooth(duration: 1.5))
             } noticeView: {
                 Group {
-                    if store.showEyeDetail {
+                    if store.eyeDetail != nil {
                         eyeDetailNotice
                     } else {
                         NoticeView(title: .constant(store.noticeTitle))
