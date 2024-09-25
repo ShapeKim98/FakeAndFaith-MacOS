@@ -9,6 +9,7 @@ import ComposableArchitecture
 import FeatureMain
 import FeatureEyeDetail
 import FeatureMainDetail
+import Domain
 
 @Reducer
 struct RootFeature {
@@ -29,7 +30,7 @@ struct RootFeature {
         Reduce { state, action in
             switch action {
             case .main(.delegate(.showMainDetail)):
-                state = .mainDetail(.init())
+                state = .mainDetail(.init(writings: Writing.mock))
                 return .none
             case .mainDetail(.delegate(.showMain)):
                 state = .main(.init())
