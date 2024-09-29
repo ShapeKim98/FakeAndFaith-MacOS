@@ -50,6 +50,7 @@ public struct MainDetailView: View {
                             
                             if store.currentPage == .ear {
                                 playWritingButton
+                                    .padding(.top, 65)
                             }
                             
                             writingGrid
