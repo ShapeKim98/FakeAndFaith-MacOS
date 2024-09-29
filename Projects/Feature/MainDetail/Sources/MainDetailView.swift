@@ -50,6 +50,7 @@ public struct MainDetailView: View {
                             
                             if store.currentPage == .ear {
                                 playWritingButton
+                                    .padding(.top, 65)
                             }
                             
                             writingGrid
@@ -167,8 +168,18 @@ public struct MainDetailView: View {
             
             ZStack(alignment: .top) {
                 WaterfallGrid(store.writings) { writing in
-                    WritingCell(writing: writing)
-                        .foregroundStyle(.main)
+                    let isPlayingTTS = store.currentWritingId != nil
+                    let isPlaying = store.currentWritingId == writing.id
+                    let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
+                    
+                    return Button(action: { store.send(.fakeWritingButtonTapped(writing)) }) {
+                        WritingCell(
+                            writing: writing,
+                            isFake: true
+                        )
+                        .foregroundStyle(isPlayingTTS ? playingColor : .main)
+                    }
+                    .disabled(store.currentPage != .ear)
                 }
                 .gridStyle(columns: 3, spacing: 56)
                 .scrollOptions(direction: .vertical)
@@ -186,8 +197,8 @@ public struct MainDetailView: View {
                     .padding(.top, 65)
                 }
                 .disabled(store.currentPage != .eye)
+                .allowsHitTesting(false)
             }
-            .allowsHitTesting(false)
             .background(alignment: .topLeading) {
                 if store.currentPage == .eye {
                     eye
@@ -199,7 +210,7 @@ public struct MainDetailView: View {
     }
     
     private var writingTextField: some View {
-        TextField("", text: $store.writingContentText.sending(\.writingContentTextChanged))
+        TextField("", text: $store.writingContentText)
             .frame(width: 800, height: 40)
             .background {
                 Rectangle()
@@ -210,13 +221,13 @@ public struct MainDetailView: View {
             .font(.minionPro.regular.swiftUIFont(size: 20))
             .foregroundStyle(.main)
             .onSubmit {
-                store.send(.writingSubmitButtonTapped, animation: .smooth(duration: 1))
+                store.send(.writingSubmitButtonTapped)
             }
     }
     
     private var writingSubmitButton: some View {
         Button {
-            store.send(.writingSubmitButtonTapped, animation: .smooth(duration: 1))
+            store.send(.writingSubmitButtonTapped)
         } label: {
             Image.nextIcon
                 .resizable()

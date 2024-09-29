@@ -33,6 +33,7 @@ public struct MainDetailFeature {
         var writingContentText: String = ""
         var isPlayingTTSText: Bool = false
         var playingTask: Task<Void, Never>?
+        var currentWritingId: Int?
         
         @Presents
         var eyeDetail: EyeDetailFeature.State?
@@ -42,7 +43,7 @@ public struct MainDetailFeature {
         }
     }
     
-    public enum Action {
+    public enum Action: BindableAction {
         case eyeButtonTapped
         case earButtonTapped
         case handButtonTapped
@@ -52,7 +53,6 @@ public struct MainDetailFeature {
         case eyeDragging(DragGesture.Value)
         case eyeDragged
         case mainDetailViewOnAppeared
-        case writingContentTextChanged(String)
         case writingSubmitButtonTapped
         case truthWritingsTapped
         case closeEyeDetail
@@ -62,6 +62,10 @@ public struct MainDetailFeature {
         case stopTTS
         case playButtonTapped
         case cancelTTSStream
+        case updateCurrentWritingId(Int?)
+        case fakeWritingButtonTapped(Writing)
+        case writingUpdate([Writing])
+        case binding(BindingAction<State>)
         
         public enum Delegate {
             case showMain
@@ -73,6 +77,8 @@ public struct MainDetailFeature {
     }
     
     public var body: some ReducerOf<Self> {
+        BindingReducer()
+        
         Reduce { state, action in
             switch action {
             case .eyeButtonTapped:
@@ -119,16 +125,26 @@ public struct MainDetailFeature {
                 return .none
             case .writingSubmitButtonTapped:
                 let _ = self.writingUseCase.save(
-                    content: state.writingContentText)
+                    content: state.writingContentText
+                )
                 
                 // TODO: 로컬 데이터 도입 후 삭제
-                state.writings.append(.init(content: state.writingContentText))
-                
+                var newWritings = state.writings.map { writing in
+                    return Writing(
+                        id: writing.id + 1,
+                        content: writing.content,
+                        font: writing.font
+                    )
+                }
+                newWritings.insert(
+                    .init(
+                        id: 0,
+                        content: state.writingContentText
+                    ),
+                    at: 0
+                )
                 state.writingContentText = ""
-                return .none
-            case .writingContentTextChanged(let text):
-                state.writingContentText = text
-                return .none
+                return .send(.writingUpdate(newWritings), animation: .smooth)
             case .truthWritingsTapped:
                 state.eyeDetail = .init()
                 return .none
@@ -142,35 +158,11 @@ public struct MainDetailFeature {
             case .eyeDetail:
                 return .none
             case .playTTS:
-                guard !state.isPlayingTTSText else {
-                    return .none
-                }
-                state.isPlayingTTSText = true
-                let stream = AsyncStream<Bool> { continuation in
-                    Task { [ writings = state.writings ] in
-                        for writing in writings {
-                            let isHasNext = await ttsClient.play(writing.content)
-                            continuation.yield(isHasNext)
-                        }
-                        
-                        continuation.finish()
-                    }
-                }
-                
-                return .run { send in
-                    for await play in stream {
-                        guard play else {
-                            await send(.cancelTTSStream)
-                            break
-                        }
-                    }
-                    
-                    ttsClient.finished()
-                }
-                .cancellable(id: CancelId.ttsPlaying, cancelInFlight: true)
+                return playTTS(state: &state)
             case .stopTTS:
                 state.isPlayingTTSText = false
                 ttsClient.stop()
+                state.currentWritingId = nil
                 return .none
             case .playButtonTapped:
                 if state.isPlayingTTSText {
@@ -180,6 +172,29 @@ public struct MainDetailFeature {
                 }
             case .cancelTTSStream:
                 return .cancel(id: CancelId.ttsPlaying)
+            case let .updateCurrentWritingId(id):
+                if id == nil {
+                    state.isPlayingTTSText = false
+                }
+                state.currentWritingId = id
+                return .none
+            case let .fakeWritingButtonTapped(writing):
+                guard !state.isPlayingTTSText else {
+                    return .none
+                }
+                state.isPlayingTTSText = true
+                return .run { send in
+                    await send(.updateCurrentWritingId(writing.id))
+                    let _ = await ttsClient.play(writing.content)
+                    ttsClient.finished()
+                    await send(.updateCurrentWritingId(nil))
+                }
+                .cancellable(id: CancelId.ttsPlaying, cancelInFlight: true)
+            case let .writingUpdate(writings):
+                state.writings = writings
+                return .none
+            case .binding:
+                return .none
             }
         }
         .ifLet(\.eyeDetail, action: \.eyeDetail) {
@@ -190,6 +205,40 @@ public struct MainDetailFeature {
     private func resetEyeOffset(state: inout State) {
         state.eyeOffsetX = 0
         state.eyeOffsetY = 0
+    }
+    
+    private func playTTS(state: inout State) -> Effect<Action> {
+        guard !state.isPlayingTTSText else {
+            return .none
+        }
+        state.isPlayingTTSText = true
+        let stream = AsyncStream<(Bool, Int)> { continuation in
+            Task { [ writings = state.writings ] in
+                for writing in writings {
+                    let isHasNext = await ttsClient.play(writing.content)
+                    continuation.yield((isHasNext, writing.id))
+                }
+                
+                continuation.finish()
+            }
+        }
+        
+        return .run { send in
+            await send(.updateCurrentWritingId(0), animation: .smooth)
+            
+            for await play in stream {
+                let (isHasNext, id) = play
+                guard isHasNext else {
+                    await send(.cancelTTSStream)
+                    break
+                }
+                await send(.updateCurrentWritingId(id + 1), animation: .smooth)
+            }
+            
+            ttsClient.finished()
+            await send(.updateCurrentWritingId(nil), animation: .smooth)
+        }
+        .cancellable(id: CancelId.ttsPlaying, cancelInFlight: true)
     }
 }
 

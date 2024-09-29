@@ -7,6 +7,7 @@
 
 import Foundation
 import AVFoundation
+import NaturalLanguage
 
 
 final class TTSProvider: NSObject {
@@ -34,7 +35,11 @@ final class TTSProvider: NSObject {
     func speak(_ text: String) {
         isHasNext = true
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US") // 음성 언어 설정 (예: 영어)
+        // 텍스트의 언어 자동 감지
+        let languageCode = detectLanguage(for: text)
+        
+        // 감지된 언어로 음성 설정
+        utterance.voice = AVSpeechSynthesisVoice(language: languageCode)
         utterance.rate = 0.5 // 속도 조절 (0.0 ~ 1.0)
         
         speechSynthesizer.speak(utterance)
@@ -48,6 +53,16 @@ final class TTSProvider: NSObject {
     public func finished() {
         isHasNext = true
         print(isHasNext)
+    }
+    
+    private func detectLanguage(for text: String) -> String {
+        let recognizer = NLLanguageRecognizer()
+        recognizer.processString(text)
+        if let language = recognizer.dominantLanguage {
+            return language.rawValue
+        }
+        // 기본 언어 설정 (예: 영어)
+        return "en-US"
     }
 }
 
