@@ -8,6 +8,30 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
+let newsFeedTarget: Target = .target(
+    name: "FeatureNewsFeed",
+    destinations: .appDestinations,
+    product: .framework,
+    bundleId: .moduleBundleId(name: "FeatureNewsFeed"),
+    deploymentTargets: .appMinimunTarget,
+    sources: ["NewsFeed/Sources/**"],
+    dependencies: [
+        .project(target: "Domain", path: .relativeToRoot("Projects/Domain")),
+        .project(target: "DSKit", path: .relativeToRoot("Projects/DSKit"))
+    ])
+
+let newsFeedDemoTarget: Target = .target(
+    name: "FeatureNewsFeedDemo",
+    destinations: .appDestinations,
+    product: .app,
+    bundleId: .moduleBundleId(name: "FeatureNewsFeedDemo"),
+    deploymentTargets: .appMinimunTarget,
+    infoPlist: .file(path: .relativeToRoot("Projects/App/Resources/FAKEandFAITH-info.plist")),
+    sources: ["NewsFeedDemo/Sources/**"],
+    dependencies: [
+        .target(newsFeedTarget)
+    ])
+
 let mainTarget: Target = .target(
     name: "FeatureMain",
     destinations: .appDestinations,
@@ -87,6 +111,8 @@ let project = Project(
         mainDetailTarget,
         mainDetailDemoTarget,
         eyeDetailTarget,
-        eyeDetailDemoTarget
+        eyeDetailDemoTarget,
+        newsFeedTarget,
+        newsFeedDemoTarget
     ]
 )

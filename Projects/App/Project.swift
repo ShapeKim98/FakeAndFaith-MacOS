@@ -25,6 +25,7 @@ let project = Project(
                 .project(target: "FeatureMain", path: .relativeToRoot("Projects/Feature")),
                 .project(target: "FeatureMainDetail", path: .relativeToRoot("Projects/Feature")),
                 .project(target: "FeatureEyeDetail", path: .relativeToRoot("Projects/Feature")),
+                .project(target: "FeatureNewsFeed", path: .relativeToRoot("Projects/Feature"))
             ]
         )
     ]
