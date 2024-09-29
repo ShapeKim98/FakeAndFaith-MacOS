@@ -173,6 +173,9 @@ public struct MainDetailFeature {
             case .cancelTTSStream:
                 return .cancel(id: CancelId.ttsPlaying)
             case let .updateCurrentWritingId(id):
+                if id == nil {
+                    state.isPlayingTTSText = false
+                }
                 state.currentWritingId = id
                 return .none
             case let .fakeWritingButtonTapped(writing):
