@@ -173,9 +173,11 @@ public struct MainDetailView: View {
                     let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
                     
                     return Button(action: { store.send(.fakeWritingButtonTapped(writing)) }) {
-                        WritingCell(writing: writing)
-                            .foregroundStyle(isPlayingTTS ? playingColor : .main)
-                            .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+                        WritingCell(
+                            writing: writing,
+                            isFake: true
+                        )
+                        .foregroundStyle(isPlayingTTS ? playingColor : .main)
                     }
                     .disabled(store.currentPage != .ear)
                 }
@@ -208,7 +210,7 @@ public struct MainDetailView: View {
     }
     
     private var writingTextField: some View {
-        TextField("", text: $store.writingContentText.sending(\.writingContentTextChanged))
+        TextField("", text: $store.writingContentText)
             .frame(width: 800, height: 40)
             .background {
                 Rectangle()
@@ -219,13 +221,13 @@ public struct MainDetailView: View {
             .font(.minionPro.regular.swiftUIFont(size: 20))
             .foregroundStyle(.main)
             .onSubmit {
-                store.send(.writingSubmitButtonTapped, animation: .smooth(duration: 1))
+                store.send(.writingSubmitButtonTapped)
             }
     }
     
     private var writingSubmitButton: some View {
         Button {
-            store.send(.writingSubmitButtonTapped, animation: .smooth(duration: 1))
+            store.send(.writingSubmitButtonTapped)
         } label: {
             Image.nextIcon
                 .resizable()

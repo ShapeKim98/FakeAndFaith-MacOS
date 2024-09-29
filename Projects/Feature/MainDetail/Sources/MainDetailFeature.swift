@@ -43,7 +43,7 @@ public struct MainDetailFeature {
         }
     }
     
-    public enum Action {
+    public enum Action: BindableAction {
         case eyeButtonTapped
         case earButtonTapped
         case handButtonTapped
@@ -53,7 +53,6 @@ public struct MainDetailFeature {
         case eyeDragging(DragGesture.Value)
         case eyeDragged
         case mainDetailViewOnAppeared
-        case writingContentTextChanged(String)
         case writingSubmitButtonTapped
         case truthWritingsTapped
         case closeEyeDetail
@@ -65,6 +64,8 @@ public struct MainDetailFeature {
         case cancelTTSStream
         case updateCurrentWritingId(Int?)
         case fakeWritingButtonTapped(Writing)
+        case writingUpdate([Writing])
+        case binding(BindingAction<State>)
         
         public enum Delegate {
             case showMain
@@ -76,6 +77,8 @@ public struct MainDetailFeature {
     }
     
     public var body: some ReducerOf<Self> {
+        BindingReducer()
+        
         Reduce { state, action in
             switch action {
             case .eyeButtonTapped:
@@ -122,19 +125,26 @@ public struct MainDetailFeature {
                 return .none
             case .writingSubmitButtonTapped:
                 let _ = self.writingUseCase.save(
-                    content: state.writingContentText)
+                    content: state.writingContentText
+                )
                 
                 // TODO: 로컬 데이터 도입 후 삭제
-                state.writings.append(.init(
-                    id: state.writings.count,
-                    content: state.writingContentText
-                ))
-                
+                var newWritings = state.writings.map { writing in
+                    return Writing(
+                        id: writing.id + 1,
+                        content: writing.content,
+                        font: writing.font
+                    )
+                }
+                newWritings.insert(
+                    .init(
+                        id: 0,
+                        content: state.writingContentText
+                    ),
+                    at: 0
+                )
                 state.writingContentText = ""
-                return .none
-            case .writingContentTextChanged(let text):
-                state.writingContentText = text
-                return .none
+                return .send(.writingUpdate(newWritings), animation: .smooth)
             case .truthWritingsTapped:
                 state.eyeDetail = .init()
                 return .none
@@ -177,6 +187,11 @@ public struct MainDetailFeature {
                     await send(.updateCurrentWritingId(nil))
                 }
                 .cancellable(id: CancelId.ttsPlaying, cancelInFlight: true)
+            case let .writingUpdate(writings):
+                state.writings = writings
+                return .none
+            case .binding:
+                return .none
             }
         }
         .ifLet(\.eyeDetail, action: \.eyeDetail) {

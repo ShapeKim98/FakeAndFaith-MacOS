@@ -5,16 +5,55 @@
 //  Created by 김도형 on 6/18/24.
 //
 
-import Foundation
+import SwiftUI
+
+import DSKit
 
 public struct Writing: Identifiable {
-    public init(id: Int, content: String) {
+    public init(
+        id: Int,
+        content: String,
+        font: Font = WritingFont.allCases.shuffled()[0].font
+    ) {
         self.id = id
         self.content = content
+        self.font = font
     }
     
-    public let id: Int
+    public var id: Int
     public var content: String
+    public let font: Font
+}
+
+extension Writing {
+    public enum WritingFont: CaseIterable {
+        case blackR01
+        case blackR02
+        case blackB01
+        case blackB02
+        case blackB03
+        case blackB04
+        
+        public var font: Font {
+            switch self {
+            case .blackR01:
+                return DSKitFontFamily.MinionPro.regular.swiftUIFont(size: 14)
+            case .blackR02:
+                return DSKitFontFamily.MinionPro.regular.swiftUIFont(size: 24)
+            case .blackB01:
+                return DSKitFontFamily.MinionPro.bold.swiftUIFont(size: 14)
+            case .blackB02:
+                return DSKitFontFamily.MinionPro.bold.swiftUIFont(size: 20)
+            case .blackB03:
+                return DSKitFontFamily.MinionPro.bold.swiftUIFont(size: 24)
+            case .blackB04:
+                return DSKitFontFamily.MinionPro.bold.swiftUIFont(size: 32)
+            }
+        }
+    }
+}
+
+extension Writing {
     public static var truth: [Writing] {
         return [
             .init(
