@@ -174,6 +174,7 @@ public struct MainDetailView: View {
                     return Button(action: { store.send(.fakeWritingButtonTapped(writing)) }) {
                         WritingCell(writing: writing)
                             .foregroundStyle(isPlayingTTS ? playingColor : .main)
+                            .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
                     }
                     .disabled(store.currentPage != .ear)
                 }
