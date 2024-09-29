@@ -171,8 +171,11 @@ public struct MainDetailView: View {
                     let isPlaying = store.currentWritingId == writing.id
                     let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
                     
-                    return WritingCell(writing: writing)
-                        .foregroundStyle(isPlayingTTS ? playingColor : .main)
+                    return Button(action: { store.send(.fakeWritingButtonTapped(writing)) }) {
+                        WritingCell(writing: writing)
+                            .foregroundStyle(isPlayingTTS ? playingColor : .main)
+                    }
+                    .disabled(store.currentPage != .ear)
                 }
                 .gridStyle(columns: 3, spacing: 56)
                 .scrollOptions(direction: .vertical)
@@ -190,8 +193,8 @@ public struct MainDetailView: View {
                     .padding(.top, 65)
                 }
                 .disabled(store.currentPage != .eye)
+                .allowsHitTesting(false)
             }
-            .allowsHitTesting(false)
             .background(alignment: .topLeading) {
                 if store.currentPage == .eye {
                     eye

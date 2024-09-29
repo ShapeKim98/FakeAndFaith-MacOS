@@ -64,6 +64,7 @@ public struct MainDetailFeature {
         case playButtonTapped
         case cancelTTSStream
         case updateCurrentWritingId(Int?)
+        case fakeWritingButtonTapped(Writing)
         
         public enum Delegate {
             case showMain
@@ -164,6 +165,18 @@ public struct MainDetailFeature {
             case let .updateCurrentWritingId(id):
                 state.currentWritingId = id
                 return .none
+            case let .fakeWritingButtonTapped(writing):
+                guard !state.isPlayingTTSText else {
+                    return .none
+                }
+                state.isPlayingTTSText = true
+                return .run { send in
+                    await send(.updateCurrentWritingId(writing.id))
+                    let _ = await ttsClient.play(writing.content)
+                    ttsClient.finished()
+                    await send(.updateCurrentWritingId(nil))
+                }
+                .cancellable(id: CancelId.ttsPlaying, cancelInFlight: true)
             }
         }
         .ifLet(\.eyeDetail, action: \.eyeDetail) {
