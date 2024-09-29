@@ -56,5 +56,5 @@ extension WritingCell {
 }
 
 #Preview {
-    WritingCell(writing: .init(content: ""))
+    WritingCell(writing: .init(id: 0, content: ""))
 }

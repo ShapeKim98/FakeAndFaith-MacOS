@@ -167,8 +167,12 @@ public struct MainDetailView: View {
             
             ZStack(alignment: .top) {
                 WaterfallGrid(store.writings) { writing in
-                    WritingCell(writing: writing)
-                        .foregroundStyle(.main)
+                    let isPlayingTTS = store.currentWritingId != nil
+                    let isPlaying = store.currentWritingId == writing.id
+                    let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
+                    
+                    return WritingCell(writing: writing)
+                        .foregroundStyle(isPlayingTTS ? playingColor : .main)
                 }
                 .gridStyle(columns: 3, spacing: 56)
                 .scrollOptions(direction: .vertical)
