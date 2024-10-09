@@ -84,9 +84,9 @@ struct NoticeView: View {
             .font(.minionPro.bold.swiftUIFont(size: 16))
             .foregroundStyle(.black)
             .padding(.vertical, 12)
-            .background(.main)
             .offset(x: xOffset)
         }
+        .background(.main)
         .disabled(true)
         .onAppear {
             withAnimation(.linear(duration: 14).repeatForever(autoreverses: false)) {
