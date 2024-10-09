@@ -6,6 +6,7 @@
 //
 
 import ComposableArchitecture
+import Domain
 
 @Reducer
 public struct EyeDetailFeature {
@@ -13,7 +14,11 @@ public struct EyeDetailFeature {
     
     @ObservableState
     public struct State {
-        public init() {}
+        var news: NewsEntity
+        
+        public init(news:  NewsEntity) {
+            self.news = news
+        }
     }
     
     public enum Action {
@@ -28,7 +33,7 @@ public struct EyeDetailFeature {
         Reduce { state, action in
             switch action {
             case .closeButtonTapped:
-                return .send(.delegate(.close))
+                return .send(.delegate(.close), animation: .smooth)
             case .delegate:
                 return .none
                 

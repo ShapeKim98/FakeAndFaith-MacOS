@@ -9,15 +9,15 @@ import SwiftUI
 import DSKit
 import Domain
 
-struct WritingCell: View {
-    private let writing: Writing
+struct NewsCell: View {
+    private let news: NewsEntity
     private let isFake: Bool
     
     init(
-        writing: Writing,
+        news: NewsEntity,
         isFake: Bool = false
     ) {
-        self.writing = writing
+        self.news = news
         self.isFake = isFake
     }
     
@@ -25,8 +25,8 @@ struct WritingCell: View {
         HStack {
             Spacer()
             
-            Text(writing.content)
-                .font(writing.font)
+            Text(isFake ? news.title : news.truth)
+                .font(news.font)
                 .lineSpacing(8)
                 .multilineTextAlignment(.leading)
                 .rotation3DEffect(.degrees(180), axis: (x: 0, y: isFake ? 1 : 0, z: 0))
@@ -36,5 +36,12 @@ struct WritingCell: View {
 }
 
 #Preview {
-    WritingCell(writing: .init(id: 0, content: ""))
+    NewsCell(news: .init(
+        id: 0,
+        title: "",
+        truth: "",
+        summary: "",
+        content: "",
+        image: ""
+    ))
 }

@@ -14,17 +14,27 @@ import CoreKit
 
 @Reducer
 public struct MainDetailFeature {
-    @Dependency(\.writingUseCase)
-    var writingUseCase
+    @Dependency(\.newsClient)
+    private var newsClient
     @Dependency(\.ttsClient)
     private var ttsClient
+    @Dependency(\.openURL)
+    private var openURL
     
     public init() { }
     
     @ObservableState
     public struct State {
-        var writings: [Writing]
-        var truth: [Writing] = Writing.truth
+        fileprivate var domain = MainDetail()
+        
+        var newsList: [NewsEntity] {
+            switch currentPage {
+            case .eye: return domain.eyeNewsList
+            case .ear: return domain.earNewsList
+            case .hand: return domain.handNewsList
+            case .none: return []
+            }
+        }
         var currentPage: Page = .none
         var noticeTitle: String = ""
         var eyeOffsetX: CGFloat = 0
@@ -38,9 +48,7 @@ public struct MainDetailFeature {
         @Presents
         var eyeDetail: EyeDetailFeature.State?
         
-        public init(writings: [Writing] = []) {
-            self.writings = writings
-        }
+        public init() { }
     }
     
     public enum Action: BindableAction {
@@ -51,10 +59,12 @@ public struct MainDetailFeature {
         case aboutButtonTapped
         case videoButtonTapped
         case eyeDragging(DragGesture.Value)
+        case updateEyeOffsetX(DragGesture.Value)
+        case updateEyeOffsetY(DragGesture.Value)
         case eyeDragged
         case mainDetailViewOnAppeared
         case writingSubmitButtonTapped
-        case truthWritingsTapped
+        case showEyeDetail(NewsEntity)
         case closeEyeDetail
         case delegate(Delegate)
         case eyeDetail(EyeDetailFeature.Action)
@@ -63,8 +73,11 @@ public struct MainDetailFeature {
         case playButtonTapped
         case cancelTTSStream
         case updateCurrentWritingId(Int?)
-        case fakeWritingButtonTapped(Writing)
-        case writingUpdate([Writing])
+        case fakeWritingButtonTapped(NewsEntity)
+        case writingUpdate([NewsEntity])
+        case fetchEyeNewsList
+        case fetchEarNewsList
+        case fetchHandNewsList
         case binding(BindingAction<State>)
         
         public enum Delegate {
@@ -107,47 +120,41 @@ public struct MainDetailFeature {
             case .aboutButtonTapped:
                 return .none
             case .videoButtonTapped:
-                return .none
+                guard let url = URL(string: "https://www.youtube.com/watch?v=XNWM_h8i6is") else {
+                    return .none
+                }
+                return .run { _ in
+#if os(macOS)
+                    NSWorkspace.shared.open(url)
+#else
+                    await openURL(url)
+#endif
+                }
             case .eyeDragging(let dragValue):
                 state.eyeIsDragging = true
-                
+                return .merge(
+                    .send(.updateEyeOffsetX(dragValue)),
+                    .send(.updateEyeOffsetY(dragValue))
+                )
+            case .updateEyeOffsetX(let dragValue):
                 let moveX = dragValue.translation.width
-                let moveY = dragValue.translation.height
-                
                 state.eyeOffsetX += moveX
+                return .none
+            case .updateEyeOffsetY(let dragValue):
+                let moveY = dragValue.translation.height
                 state.eyeOffsetY += moveY
                 return .none
             case .eyeDragged:
                 state.eyeIsDragging = false
                 return .none
             case .mainDetailViewOnAppeared:
-                state.writings = self.writingUseCase.fetches()
-                return .none
+                return .merge(
+                    .send(.fetchEyeNewsList),
+                    .send(.fetchEarNewsList),
+                    .send(.fetchHandNewsList)
+                )
             case .writingSubmitButtonTapped:
-                let _ = self.writingUseCase.save(
-                    content: state.writingContentText
-                )
-                
-                // TODO: 로컬 데이터 도입 후 삭제
-                var newWritings = state.writings.map { writing in
-                    return Writing(
-                        id: writing.id + 1,
-                        content: writing.content,
-                        font: writing.font
-                    )
-                }
-                newWritings.insert(
-                    .init(
-                        id: 0,
-                        content: state.writingContentText
-                    ),
-                    at: 0
-                )
-                state.writingContentText = ""
-                return .send(.writingUpdate(newWritings), animation: .smooth)
-            case .truthWritingsTapped:
-                state.eyeDetail = .init()
-                return .none
+                return updateHandNewsList(state: &state)
             case .closeEyeDetail:
                 state.eyeDetail = nil
                 return .none
@@ -179,6 +186,9 @@ public struct MainDetailFeature {
                 state.currentWritingId = id
                 return .none
             case let .fakeWritingButtonTapped(writing):
+                guard state.currentPage == .ear else {
+                    return .send(.showEyeDetail(writing), animation: .smooth)
+                }
                 guard !state.isPlayingTTSText else {
                     return .none
                 }
@@ -191,15 +201,34 @@ public struct MainDetailFeature {
                 }
                 .cancellable(id: CancelId.ttsPlaying, cancelInFlight: true)
             case let .writingUpdate(writings):
-                state.writings = writings
+                state.domain.handNewsList = writings
+                return .none
+            case .fetchEyeNewsList:
+                state.domain.eyeNewsList = newsClient.fetchEyeNewsList().map {
+                    news in news.toEntity()
+                }
+                return .none
+            case .fetchEarNewsList:
+                state.domain.earNewsList = newsClient.fetchEarNewsList().map {
+                    news in news.toEntity()
+                }
+                return .none
+            case .fetchHandNewsList:
+                state.domain.handNewsList = newsClient.fetchHandNewsList().map {
+                    news in news.toEntity()
+                }
                 return .none
             case .binding:
+                return .none
+            case .showEyeDetail(let news):
+                state.eyeDetail = .init(news: news)
                 return .none
             }
         }
         .ifLet(\.eyeDetail, action: \.eyeDetail) {
             EyeDetailFeature()
         }
+        ._printChanges()
     }
     
     private func resetEyeOffset(state: inout State) {
@@ -213,7 +242,7 @@ public struct MainDetailFeature {
         }
         state.isPlayingTTSText = true
         let stream = AsyncStream<(Bool, Int)> { continuation in
-            Task { [ writings = state.writings ] in
+            Task { [ writings = state.domain.earNewsList ] in
                 for writing in writings {
                     let isHasNext = await ttsClient.play(writing.content)
                     continuation.yield((isHasNext, writing.id))
@@ -222,9 +251,8 @@ public struct MainDetailFeature {
                 continuation.finish()
             }
         }
-        
         return .run { send in
-            await send(.updateCurrentWritingId(0), animation: .smooth)
+            await send(.updateCurrentWritingId(1), animation: .smooth)
             
             for await play in stream {
                 let (isHasNext, id) = play
@@ -240,10 +268,37 @@ public struct MainDetailFeature {
         }
         .cancellable(id: CancelId.ttsPlaying, cancelInFlight: true)
     }
+    
+    private func updateHandNewsList(state: inout State) -> Effect<Action> {
+        var newWritings = state.domain.handNewsList.map { writing in
+            return NewsEntity(
+                id: writing.id + 1,
+                title: writing.title,
+                truth: writing.truth,
+                summary: writing.summary,
+                content: writing.content,
+                image: writing.image,
+                font: writing.font
+            )
+        }
+        newWritings.insert(
+            NewsEntity(
+                id: 1,
+                title: state.writingContentText,
+                truth: "",
+                summary: "",
+                content: "",
+                image: ""
+            ),
+            at: 0
+        )
+        state.writingContentText = ""
+        return .send(.writingUpdate(newWritings), animation: .smooth)
+    }
 }
 
 extension MainDetailFeature {
-    enum Page {
+    enum Page: Equatable {
         case none
         case eye
         case ear

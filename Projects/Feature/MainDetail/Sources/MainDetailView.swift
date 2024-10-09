@@ -35,30 +35,7 @@ public struct MainDetailView: View {
                         Spacer()
                     }
                 } else {
-                    ScrollView {
-                        VStack {
-                            buttons
-                            
-                            if store.currentPage == .hand {
-                                HStack(spacing: 24) {
-                                    writingTextField
-                                    
-                                    writingSubmitButton
-                                }
-                                .padding(.top, 65)
-                            }
-                            
-                            if store.currentPage == .ear {
-                                playWritingButton
-                                    .padding(.top, 65)
-                            }
-                            
-                            writingGrid
-                            
-                            Spacer()
-                        }
-                    }
-                    .padding(.top, 196)
+                    content
                 }
             }
             .fadeAnimation(delay: 0.5)
@@ -66,6 +43,7 @@ public struct MainDetailView: View {
             .overlay {
                 if let store = store.scope(state: \.eyeDetail, action: \.eyeDetail) {
                     EyeDetailView(store: store)
+                        .transition(.opacity)
                 }
             }
             .navigationBar {
@@ -84,7 +62,38 @@ public struct MainDetailView: View {
                     }
                 }
             }
+            .onAppear {
+                store.send(.mainDetailViewOnAppeared)
+            }
         }
+    }
+    
+    private var content: some View {
+        ScrollView {
+            VStack {
+                
+                buttons
+                
+                if store.currentPage == .hand {
+                    HStack(spacing: 24) {
+                        writingTextField
+                        
+                        writingSubmitButton
+                    }
+                    .padding(.top, 65)
+                }
+                
+                if store.currentPage == .ear {
+                    playWritingButton
+                        .padding(.top, 65)
+                }
+                
+                writingGrid
+                
+                Spacer()
+            }
+        }
+        .padding(.top, 196)
     }
     
     private var buttons: some View {
@@ -158,55 +167,47 @@ public struct MainDetailView: View {
                     })
                     .onEnded({ dragValue in
                         store.send(.eyeDragged)
-                    }))
+                    })
+            )
             .offset(x: store.eyeOffsetX, y: store.eyeOffsetY)
     }
     
     private var writingGrid: some View {
-        HStack {
-            Spacer(minLength: 200)
-            
+        WaterfallGrid(store.newsList) { news in
             ZStack(alignment: .top) {
-                WaterfallGrid(store.writings) { writing in
-                    let isPlayingTTS = store.currentWritingId != nil
-                    let isPlaying = store.currentWritingId == writing.id
-                    let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
-                    
-                    return Button(action: { store.send(.fakeWritingButtonTapped(writing)) }) {
-                        WritingCell(
-                            writing: writing,
-                            isFake: true
-                        )
-                        .foregroundStyle(isPlayingTTS ? playingColor : .main)
-                    }
-                    .disabled(store.currentPage != .ear)
-                }
-                .gridStyle(columns: 3, spacing: 56)
-                .scrollOptions(direction: .vertical)
-                .padding(.top, 77)
+                let isPlayingTTS = store.currentWritingId != nil
+                let isPlaying = store.currentWritingId == news.id
+                let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
                 
-                Button {
-                    store.send(.truthWritingsTapped, animation: .smooth(duration: 1))
-                } label: {
-                    WaterfallGrid(store.truth) { writing in
-                        WritingCell(writing: writing)
-                            .foregroundStyle(.black)
-                    }
-                    .gridStyle(columns: 3, spacing: 56)
-                    .scrollOptions(direction: .vertical)
-                    .padding(.top, 65)
+                Button(action: { store.send(.fakeWritingButtonTapped(news), animation: .smooth) }) {
+                    NewsCell(
+                        news: news,
+                        isFake: true
+                    )
+                    .foregroundStyle(isPlayingTTS ? playingColor : .main)
                 }
-                .disabled(store.currentPage != .eye)
-                .allowsHitTesting(false)
+                .disabled(store.currentPage == .hand)
+                
+                NewsCell(news: news)
+                    .foregroundStyle(.black)
+                    .allowsHitTesting(false)
             }
-            .background(alignment: .topLeading) {
-                if store.currentPage == .eye {
-                    eye
-                }
-            }
-            
-            Spacer(minLength: 200)
+            .transition(.opacity)
+            .animation(.smooth, value: store.currentPage)
         }
+        .gridStyle(
+            columns: 3,
+            spacing: 56,
+            animation: nil
+        )
+        .scrollOptions(direction: .vertical)
+        .padding(.top, 77)
+        .background(alignment: .topLeading) {
+            if store.currentPage == .eye {
+                eye
+            }
+        }
+        .padding(.horizontal, 200)
     }
     
     private var writingTextField: some View {

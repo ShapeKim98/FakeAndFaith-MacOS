@@ -23,4 +23,7 @@ public extension Image {
     static let handSymbol = DSKitAsset.handSymbol.swiftUIImage
     static let logo = DSKitAsset.logo.swiftUIImage
     static let eyeEarHandImage = DSKitAsset.eyeEarHand.swiftUIImage
+    static func news(_ name: String) -> Image {
+        return DSKitImages(name: name).swiftUIImage
+    }
 }
