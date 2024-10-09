@@ -46,7 +46,7 @@ public struct EyeDetailView: View {
     }
     
     private var people: some View {
-        Image.peopleImage
+        Image.news(store.news.image)
             .resizable()
             .scaledToFill()
     }
