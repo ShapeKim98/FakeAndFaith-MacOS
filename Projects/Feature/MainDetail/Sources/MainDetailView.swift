@@ -174,7 +174,7 @@ public struct MainDetailView: View {
     
     private var writingGrid: some View {
         WaterfallGrid(store.newsList) { news in
-            ZStack(alignment: .top) {
+            ZStack(alignment: .topLeading) {
                 let isPlayingTTS = store.currentWritingId != nil
                 let isPlaying = store.currentWritingId == news.id
                 let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
@@ -191,7 +191,9 @@ public struct MainDetailView: View {
                 NewsCell(news: news)
                     .foregroundStyle(.black)
                     .allowsHitTesting(false)
+                    .frame(width: 460)
             }
+            .frame(width: 460)
             .transition(.opacity)
             .animation(.smooth, value: store.currentPage)
         }

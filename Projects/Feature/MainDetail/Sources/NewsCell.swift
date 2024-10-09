@@ -29,9 +29,7 @@ struct NewsCell: View {
                 .font(news.font)
                 .lineSpacing(8)
                 .multilineTextAlignment(.leading)
-                .rotation3DEffect(.degrees(180), axis: (x: 0, y: isFake ? 1 : 0, z: 0))
         }
-        .frame(width: 460)
     }
 }
 

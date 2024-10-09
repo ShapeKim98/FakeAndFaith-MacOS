@@ -63,17 +63,17 @@ extension NewsEntity {
         public var font: Font {
             switch self {
             case .blackR01:
-                return DSKitFontFamily.MinionPro.regular.swiftUIFont(size: 14)
+                return DSKitFontFamily.Eulyoo1945.regular.swiftUIFont(size: 14)
             case .blackR02:
-                return DSKitFontFamily.MinionPro.regular.swiftUIFont(size: 24)
+                return DSKitFontFamily.Eulyoo1945.regular.swiftUIFont(size: 24)
             case .blackB01:
-                return DSKitFontFamily.MinionPro.bold.swiftUIFont(size: 14)
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 14)
             case .blackB02:
-                return DSKitFontFamily.MinionPro.bold.swiftUIFont(size: 20)
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 20)
             case .blackB03:
-                return DSKitFontFamily.MinionPro.bold.swiftUIFont(size: 24)
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 24)
             case .blackB04:
-                return DSKitFontFamily.MinionPro.bold.swiftUIFont(size: 32)
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 32)
             }
         }
     }
