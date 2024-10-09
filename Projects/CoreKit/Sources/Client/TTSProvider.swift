@@ -27,8 +27,8 @@ final class TTSProvider: NSObject {
         guard isHasNext else { return false }
         return await withCheckedContinuation { [weak self] continuation in
             guard let `self` else { return }
-            speak(text)
             self.continuation = continuation
+            speak(text)
         }
     }
     

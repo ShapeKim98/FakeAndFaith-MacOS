@@ -84,6 +84,9 @@ public struct MainDetailView: View {
                     }
                 }
             }
+            .onAppear {
+                store.send(.mainDetailViewOnAppeared)
+            }
         }
     }
     
@@ -167,14 +170,14 @@ public struct MainDetailView: View {
             Spacer(minLength: 200)
             
             ZStack(alignment: .top) {
-                WaterfallGrid(store.writings) { writing in
+                WaterfallGrid(store.newsList) { news in
                     let isPlayingTTS = store.currentWritingId != nil
-                    let isPlaying = store.currentWritingId == writing.id
+                    let isPlaying = store.currentWritingId == news.id
                     let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
                     
-                    return Button(action: { store.send(.fakeWritingButtonTapped(writing)) }) {
-                        WritingCell(
-                            writing: writing,
+                    return Button(action: { store.send(.fakeWritingButtonTapped(news)) }) {
+                        NewsCell(
+                            news: news,
                             isFake: true
                         )
                         .foregroundStyle(isPlayingTTS ? playingColor : .main)
@@ -188,8 +191,8 @@ public struct MainDetailView: View {
                 Button {
                     store.send(.truthWritingsTapped, animation: .smooth(duration: 1))
                 } label: {
-                    WaterfallGrid(store.truth) { writing in
-                        WritingCell(writing: writing)
+                    WaterfallGrid(store.newsList) { news in
+                        NewsCell(news: news)
                             .foregroundStyle(.black)
                     }
                     .gridStyle(columns: 3, spacing: 56)

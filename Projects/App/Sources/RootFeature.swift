@@ -30,7 +30,7 @@ struct RootFeature {
         Reduce { state, action in
             switch action {
             case .main(.delegate(.showMainDetail)):
-                state = .mainDetail(.init(writings: Writing.mock))
+                state = .mainDetail(.init())
                 return .none
             case .mainDetail(.delegate(.showMain)):
                 state = .main(.init())

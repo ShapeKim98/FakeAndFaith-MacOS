@@ -22,8 +22,8 @@ struct MainDetailDemoApp: App {
     }
 }
 
-extension Writing {
-    static var mock: [Writing] {
+extension NewsEntity {
+    static var mock: [NewsEntity] {
         return [
             .init(content: """
             Faith transcends the boundaries of the tangible world. It allows people to connect with the divine, the eternal, and the infinite. This connection can inspire acts of kindness, compassion, and selflessness, as believers strive to embody the values and virtues of their faith.
