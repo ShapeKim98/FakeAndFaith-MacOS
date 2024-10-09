@@ -223,6 +223,7 @@ public struct MainDetailFeature {
         .ifLet(\.eyeDetail, action: \.eyeDetail) {
             EyeDetailFeature()
         }
+        ._printChanges()
     }
     
     private func resetEyeOffset(state: inout State) {
@@ -246,7 +247,7 @@ public struct MainDetailFeature {
             }
         }
         return .run { send in
-            await send(.updateCurrentWritingId(0), animation: .smooth)
+            await send(.updateCurrentWritingId(1), animation: .smooth)
             
             for await play in stream {
                 let (isHasNext, id) = play
@@ -268,6 +269,7 @@ public struct MainDetailFeature {
             return NewsEntity(
                 id: writing.id + 1,
                 title: writing.title,
+                truth: writing.truth,
                 summary: writing.summary,
                 content: writing.content,
                 image: writing.image,
@@ -276,8 +278,9 @@ public struct MainDetailFeature {
         }
         newWritings.insert(
             NewsEntity(
-                id: 0,
+                id: 1,
                 title: state.writingContentText,
+                truth: "",
                 summary: "",
                 content: "",
                 image: ""
