@@ -27,43 +27,45 @@ struct NavigationBarModifier<T: View>: ViewModifier {
         }
     
     func body(content: Content) -> some View {
-        content
-            .ignoresSafeArea()
-            .overlay(alignment: .top) {
-                VStack(spacing: 0) {
-                    HStack {
-                        Spacer()
-                        
-                        title
-                        
-                        Spacer()
-                    }
-                    .overlay {
-                        HStack(spacing: 30) {
-                            if (backButtonAction != nil) {
-                                backButton
-                            }
-                            
-                            Spacer()
-                            
-                            aboutButton
-                            
-                            videoButton
-                        }
-                    }
-                    .padding(.horizontal, 100)
-                    .padding(.vertical, 28)
-                    .foregroundStyle(.white)
-                    .background(alignment: .bottom) {
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundStyle(.main)
-                    }
-                    .background(.black)
+        VStack(spacing: 0) {
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
                     
-                    noticeView
+                    title
+                    
+                    Spacer()
                 }
+                .overlay {
+                    HStack(spacing: 30) {
+                        if (backButtonAction != nil) {
+                            backButton
+                        }
+                        
+                        Spacer()
+                        
+                        aboutButton
+                        
+                        videoButton
+                    }
+                }
+                .padding(.horizontal, 100)
+                .padding(.vertical, 28)
+                .foregroundStyle(.white)
+                .background(alignment: .bottom) {
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundStyle(.main)
+                }
+                .background(.black)
+                
+                noticeView
             }
+            
+            content
+        }
+        .ignoresSafeArea()
+        .background(.black)
     }
     
     private var backButton: some View {

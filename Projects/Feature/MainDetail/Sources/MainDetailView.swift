@@ -70,6 +70,7 @@ public struct MainDetailView: View {
     private var content: some View {
         ScrollView {
             VStack {
+                
                 buttons
                 
                 if store.currentPage == .hand {
@@ -165,7 +166,8 @@ public struct MainDetailView: View {
                     })
                     .onEnded({ dragValue in
                         store.send(.eyeDragged)
-                    }))
+                    })
+            )
             .offset(x: store.eyeOffsetX, y: store.eyeOffsetY)
     }
     
@@ -183,19 +185,20 @@ public struct MainDetailView: View {
                     )
                     .foregroundStyle(isPlayingTTS ? playingColor : .main)
                 }
-                .disabled(store.currentPage != .ear)
+                .disabled(store.currentPage == .hand)
                 
-                Button {
-                    store.send(.truthWritingsTapped, animation: .smooth(duration: 1))
-                } label: {
-                    NewsCell(news: news)
-                        .foregroundStyle(.black)
-                }
-                .disabled(store.currentPage != .eye)
-                .allowsHitTesting(false)
+                NewsCell(news: news)
+                    .foregroundStyle(.black)
+                    .allowsHitTesting(false)
             }
+            .transition(.opacity)
+            .animation(.smooth, value: store.currentPage)
         }
-        .gridStyle(columns: 3, spacing: 56)
+        .gridStyle(
+            columns: 3,
+            spacing: 56,
+            animation: nil
+        )
         .scrollOptions(direction: .vertical)
         .padding(.top, 77)
         .background(alignment: .topLeading) {

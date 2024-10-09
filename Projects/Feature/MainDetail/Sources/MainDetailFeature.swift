@@ -60,7 +60,7 @@ public struct MainDetailFeature {
         case eyeDragged
         case mainDetailViewOnAppeared
         case writingSubmitButtonTapped
-        case truthWritingsTapped
+        case showEyeDetail(NewsEntity)
         case closeEyeDetail
         case delegate(Delegate)
         case eyeDetail(EyeDetailFeature.Action)
@@ -137,9 +137,6 @@ public struct MainDetailFeature {
                 )
             case .writingSubmitButtonTapped:
                 return updateHandNewsList(state: &state)
-            case .truthWritingsTapped:
-                state.eyeDetail = .init()
-                return .none
             case .closeEyeDetail:
                 state.eyeDetail = nil
                 return .none
@@ -171,6 +168,9 @@ public struct MainDetailFeature {
                 state.currentWritingId = id
                 return .none
             case let .fakeWritingButtonTapped(writing):
+                guard state.currentPage == .ear else {
+                    return .send(.showEyeDetail(writing), animation: .smooth)
+                }
                 guard !state.isPlayingTTSText else {
                     return .none
                 }
@@ -207,6 +207,9 @@ public struct MainDetailFeature {
                     }
                 return .none
             case .binding:
+                return .none
+            case .showEyeDetail(let news):
+                state.eyeDetail = .init(news: news)
                 return .none
             }
         }
@@ -280,7 +283,7 @@ public struct MainDetailFeature {
 }
 
 extension MainDetailFeature {
-    enum Page {
+    enum Page: Equatable {
         case none
         case eye
         case ear
