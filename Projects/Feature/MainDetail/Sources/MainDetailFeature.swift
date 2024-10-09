@@ -204,25 +204,19 @@ public struct MainDetailFeature {
                 state.domain.handNewsList = writings
                 return .none
             case .fetchEyeNewsList:
-                newsClient.fetchEyeNewsList()
-                    .map { news in news.toEntity() }
-                    .forEach { news in
-                        state.domain.eyeNewsList.append(news)
-                    }
+                state.domain.eyeNewsList = newsClient.fetchEyeNewsList().map {
+                    news in news.toEntity()
+                }
                 return .none
             case .fetchEarNewsList:
-                newsClient.fetchEarNewsList()
-                    .map { news in news.toEntity() }
-                    .forEach { news in
-                        state.domain.earNewsList.append(news)
-                    }
+                state.domain.earNewsList = newsClient.fetchEarNewsList().map {
+                    news in news.toEntity()
+                }
                 return .none
             case .fetchHandNewsList:
-                newsClient.fetchHandNewsList()
-                    .map { news in news.toEntity() }
-                    .forEach { news in
-                        state.domain.handNewsList.append(news)
-                    }
+                state.domain.handNewsList = newsClient.fetchHandNewsList().map {
+                    news in news.toEntity()
+                }
                 return .none
             case .binding:
                 return .none
