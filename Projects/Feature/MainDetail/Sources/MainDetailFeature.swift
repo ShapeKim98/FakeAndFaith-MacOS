@@ -57,6 +57,8 @@ public struct MainDetailFeature {
         case aboutButtonTapped
         case videoButtonTapped
         case eyeDragging(DragGesture.Value)
+        case updateEyeOffsetX(DragGesture.Value)
+        case updateEyeOffsetY(DragGesture.Value)
         case eyeDragged
         case mainDetailViewOnAppeared
         case writingSubmitButtonTapped
@@ -119,11 +121,16 @@ public struct MainDetailFeature {
                 return .none
             case .eyeDragging(let dragValue):
                 state.eyeIsDragging = true
-                
+                return .merge(
+                    .send(.updateEyeOffsetX(dragValue)),
+                    .send(.updateEyeOffsetY(dragValue))
+                )
+            case .updateEyeOffsetX(let dragValue):
                 let moveX = dragValue.translation.width
-                let moveY = dragValue.translation.height
-                
                 state.eyeOffsetX += moveX
+                return .none
+            case .updateEyeOffsetY(let dragValue):
+                let moveY = dragValue.translation.height
                 state.eyeOffsetY += moveY
                 return .none
             case .eyeDragged:
