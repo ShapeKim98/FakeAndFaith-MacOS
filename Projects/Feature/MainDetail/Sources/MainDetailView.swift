@@ -35,30 +35,7 @@ public struct MainDetailView: View {
                         Spacer()
                     }
                 } else {
-                    ScrollView {
-                        VStack {
-                            buttons
-                            
-                            if store.currentPage == .hand {
-                                HStack(spacing: 24) {
-                                    writingTextField
-                                    
-                                    writingSubmitButton
-                                }
-                                .padding(.top, 65)
-                            }
-                            
-                            if store.currentPage == .ear {
-                                playWritingButton
-                                    .padding(.top, 65)
-                            }
-                            
-                            writingGrid
-                            
-                            Spacer()
-                        }
-                    }
-                    .padding(.top, 196)
+                    content
                 }
             }
             .fadeAnimation(delay: 0.5)
@@ -88,6 +65,33 @@ public struct MainDetailView: View {
                 store.send(.mainDetailViewOnAppeared)
             }
         }
+    }
+    
+    private var content: some View {
+        ScrollView {
+            VStack {
+                buttons
+                
+                if store.currentPage == .hand {
+                    HStack(spacing: 24) {
+                        writingTextField
+                        
+                        writingSubmitButton
+                    }
+                    .padding(.top, 65)
+                }
+                
+                if store.currentPage == .ear {
+                    playWritingButton
+                        .padding(.top, 65)
+                }
+                
+                writingGrid
+                
+                Spacer()
+            }
+        }
+        .padding(.top, 196)
     }
     
     private var buttons: some View {
@@ -166,50 +170,40 @@ public struct MainDetailView: View {
     }
     
     private var writingGrid: some View {
-        HStack {
-            Spacer(minLength: 200)
-            
+        WaterfallGrid(store.newsList) { news in
             ZStack(alignment: .top) {
-                WaterfallGrid(store.newsList) { news in
-                    let isPlayingTTS = store.currentWritingId != nil
-                    let isPlaying = store.currentWritingId == news.id
-                    let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
-                    
-                    return Button(action: { store.send(.fakeWritingButtonTapped(news)) }) {
-                        NewsCell(
-                            news: news,
-                            isFake: true
-                        )
-                        .foregroundStyle(isPlayingTTS ? playingColor : .main)
-                    }
-                    .disabled(store.currentPage != .ear)
+                let isPlayingTTS = store.currentWritingId != nil
+                let isPlaying = store.currentWritingId == news.id
+                let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
+                
+                Button(action: { store.send(.fakeWritingButtonTapped(news)) }) {
+                    NewsCell(
+                        news: news,
+                        isFake: true
+                    )
+                    .foregroundStyle(isPlayingTTS ? playingColor : .main)
                 }
-                .gridStyle(columns: 3, spacing: 56)
-                .scrollOptions(direction: .vertical)
-                .padding(.top, 77)
+                .disabled(store.currentPage != .ear)
                 
                 Button {
                     store.send(.truthWritingsTapped, animation: .smooth(duration: 1))
                 } label: {
-                    WaterfallGrid(store.newsList) { news in
-                        NewsCell(news: news)
-                            .foregroundStyle(.black)
-                    }
-                    .gridStyle(columns: 3, spacing: 56)
-                    .scrollOptions(direction: .vertical)
-                    .padding(.top, 65)
+                    NewsCell(news: news)
+                        .foregroundStyle(.black)
                 }
                 .disabled(store.currentPage != .eye)
                 .allowsHitTesting(false)
             }
-            .background(alignment: .topLeading) {
-                if store.currentPage == .eye {
-                    eye
-                }
-            }
-            
-            Spacer(minLength: 200)
         }
+        .gridStyle(columns: 3, spacing: 56)
+        .scrollOptions(direction: .vertical)
+        .padding(.top, 77)
+        .background(alignment: .topLeading) {
+            if store.currentPage == .eye {
+                eye
+            }
+        }
+        .padding(.horizontal, 200)
     }
     
     private var writingTextField: some View {

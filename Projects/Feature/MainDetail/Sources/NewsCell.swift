@@ -25,7 +25,7 @@ struct NewsCell: View {
         HStack {
             Spacer()
             
-            Text(isFake ? news.title : news.content)
+            Text(news.title)
                 .font(news.font)
                 .lineSpacing(8)
                 .multilineTextAlignment(.leading)
