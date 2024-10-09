@@ -84,7 +84,7 @@ public struct EyeDetailView: View {
     private var closeButton: some View {
         VStack {
             Button {
-                store.send(.closeButtonTapped)
+                store.send(.closeButtonTapped, animation: .smooth)
             } label: {
                 Image.xIcon
                     .resizable()

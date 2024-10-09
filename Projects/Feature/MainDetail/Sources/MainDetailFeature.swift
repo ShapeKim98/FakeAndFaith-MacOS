@@ -18,6 +18,8 @@ public struct MainDetailFeature {
     private var newsClient
     @Dependency(\.ttsClient)
     private var ttsClient
+    @Dependency(\.openURL)
+    private var openURL
     
     public init() { }
     
@@ -118,7 +120,16 @@ public struct MainDetailFeature {
             case .aboutButtonTapped:
                 return .none
             case .videoButtonTapped:
-                return .none
+                guard let url = URL(string: "https://www.youtube.com/watch?v=XNWM_h8i6is") else {
+                    return .none
+                }
+                return .run { _ in
+#if os(macOS)
+                    NSWorkspace.shared.open(url)
+#else
+                    await openURL(url)
+#endif
+                }
             case .eyeDragging(let dragValue):
                 state.eyeIsDragging = true
                 return .merge(

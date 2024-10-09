@@ -43,6 +43,7 @@ public struct MainDetailView: View {
             .overlay {
                 if let store = store.scope(state: \.eyeDetail, action: \.eyeDetail) {
                     EyeDetailView(store: store)
+                        .transition(.opacity)
                 }
             }
             .navigationBar {
@@ -178,7 +179,7 @@ public struct MainDetailView: View {
                 let isPlaying = store.currentWritingId == news.id
                 let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
                 
-                Button(action: { store.send(.fakeWritingButtonTapped(news)) }) {
+                Button(action: { store.send(.fakeWritingButtonTapped(news), animation: .smooth) }) {
                     NewsCell(
                         news: news,
                         isFake: true

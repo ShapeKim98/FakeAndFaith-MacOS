@@ -40,7 +40,7 @@ public struct MainView: View {
             .navigationBar {
                 store.send(.aboutButtonTapped(proxy), animation: .default)
             } videoButtonAction: {
-                
+                store.send(.videoButtonTapped)
             } noticeView: {
                 EmptyView()
             }
@@ -163,84 +163,66 @@ public struct MainView: View {
             .aspectRatio(contentMode: .fit)
             .overlay {
                 HStack {
-                    VStack {
-                        Spacer(minLength: 280)
-                        
-                        imageTitle(title: "진실을 보는 눈")
-                            .foregroundStyle(.black)
-                        
-                        Spacer(minLength: 580)
-                        
-                        HStack {
-                            Spacer()
-                            
-                            Image.eyeSymbol
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(minHeight: 200, maxHeight: 261)
-                            
-                            Spacer()
-                        }
-                        
-                        Spacer(minLength: 180)
-                    }
+                    imageTitle(
+                        title: "진실을 보는 눈",
+                        titleColor: .black,
+                        image: .eyeSymbol,
+                        action: { store.send(.eyeImageButtonTapped) }
+                    )
                     
-                    VStack {
-                        Spacer(minLength: 280)
-                        
-                        imageTitle(title: "거짓을 듣는 귀")
-                            .foregroundStyle(.white)
-                        
-                        Spacer(minLength: 580)
-                        
-                        HStack {
-                            Spacer()
-                            
-                            Image.earSymbol
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(minHeight: 200, maxHeight: 261)
-                            
-                            Spacer()
-                        }
-                        
-                        Spacer(minLength: 180)
-                    }
+                    imageTitle(
+                        title: "거짓을 듣는 귀",
+                        titleColor: .white,
+                        image: .earSymbol,
+                        action: { store.send(.earImageButtonTapped) }
+                    )
                     
-                    VStack {
-                        Spacer(minLength: 280)
-                        
-                        imageTitle(title: "앙심을 품은 손")
-                            .foregroundStyle(.white)
-                        
-                        Spacer(minLength: 580)
-                        
-                        HStack {
-                            Spacer()
-                            
-                            Image.handSymbol
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(minHeight: 200, maxHeight: 261)
-                            
-                            Spacer()
-                        }
-                        
-                        Spacer(minLength: 180)
-                    }
+                    imageTitle(
+                        title: "앙심을 품은 손",
+                        titleColor: .white,
+                        image: .handSymbol,
+                        action: { store.send(.handImageButtonTapped) }
+                    )
                 }
             }
     }
     
     @ViewBuilder
-    private func imageTitle(title: String) -> some View {
-        HStack {
-            Spacer()
-            
-            Text(title)
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
-            
-            Spacer()
+    private func imageTitle(
+        title: String,
+        titleColor: Color,
+        image: Image,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack {
+                Spacer(minLength: 280)
+                
+                HStack {
+                    Spacer()
+                    
+                    Text(title)
+                        .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                    
+                    Spacer()
+                }
+                .foregroundStyle(titleColor)
+                
+                Spacer(minLength: 580)
+                
+                HStack {
+                    Spacer()
+                    
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(minHeight: 200, maxHeight: 261)
+                    
+                    Spacer()
+                }
+                
+                Spacer(minLength: 180)
+            }
         }
     }
 }
