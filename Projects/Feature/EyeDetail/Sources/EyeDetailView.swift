@@ -18,10 +18,10 @@ public struct EyeDetailView: View {
     }
     
     public var body: some View {
-        WithPerceptionTracking {
-            GeometryReader { proxy in
-                let width = proxy.frame(in: .global).width
-                
+        GeometryReader { proxy in
+            let width = proxy.frame(in: .global).width
+            
+            WithPerceptionTracking {
                 HStack(spacing: 0) {
                     people
                         .frame(width: width * 0.4)
@@ -52,13 +52,18 @@ public struct EyeDetailView: View {
     }
     
     private var title: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 0) {
             Text(store.news.title)
                 .font(.eulyoo1945.semiBold.swiftUIFont(size: 52))
                 .foregroundStyle(.black)
                 .multilineTextAlignment(.leading)
                 .padding(.top, 120)
-                .coordinateSpace(name: "title")
+                .padding(.bottom, 48)
+            
+            Text(store.news.summary)
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: 32))
+                .foregroundStyle(.black)
+                .multilineTextAlignment(.leading)
             
             Spacer()
         }
@@ -66,17 +71,19 @@ public struct EyeDetailView: View {
     
     private var description: some View {
         GeometryReader { proxy in
-            ScrollView(showsIndicators: false) {
-                VStack {
-                    Text(store.news.content)
-                        .font(.eulyoo1945.regular.swiftUIFont(size: 16))
-                        .foregroundStyle(.black)
-                        .multilineTextAlignment(.leading)
-                    
-                    Spacer()
+            WithPerceptionTracking {
+                ScrollView(showsIndicators: false) {
+                    VStack {
+                        Text(store.news.content)
+                            .font(.eulyoo1945.regular.swiftUIFont(size: 16))
+                            .foregroundStyle(.black)
+                            .multilineTextAlignment(.leading)
+                        
+                        Spacer()
+                    }
+                    .padding(.top, proxy.frame(in: .global).height * 0.4)
+                    .padding(.bottom, 150)
                 }
-                .padding(.top, proxy.frame(in: .global).height / 2)
-                .padding(.bottom, 150)
             }
         }
     }
