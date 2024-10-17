@@ -53,7 +53,6 @@ public struct MainView: View {
                 .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
                 .foregroundStyle(.main)
                 .multilineTextAlignment(.leading)
-                .lineSpacing(8)
             
             Spacer(minLength: 210)
             
@@ -68,7 +67,6 @@ public struct MainView: View {
                 .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
                 .foregroundStyle(.main)
                 .multilineTextAlignment(.trailing)
-                .lineSpacing(8)
         
         }
         .padding(.horizontal, 100)

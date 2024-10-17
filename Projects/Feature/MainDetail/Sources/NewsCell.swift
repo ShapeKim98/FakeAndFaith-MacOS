@@ -26,7 +26,7 @@ struct NewsCell: View {
             Spacer()
             
             Text(isFake ? news.title : news.truth)
-                .font(isFake ? news.fakeFont : news.trueFont)
+                .font(news.font)
                 .lineSpacing(8)
                 .multilineTextAlignment(.leading)
         }
