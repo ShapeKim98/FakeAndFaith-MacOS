@@ -35,51 +35,9 @@ struct NoticeView: View {
                         self.textSize = size.width
                     }
                 
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
-                
-                Text("\(title) / ")
+                ForEach(0..<32) { _ in
+                    Text("\(title) / ")
+                }
             }
             .font(.minionPro.bold.swiftUIFont(size: 16))
             .foregroundStyle(.black)
@@ -90,13 +48,13 @@ struct NoticeView: View {
         .disabled(true)
         .onAppear {
             withAnimation(.linear(duration: 14).repeatForever(autoreverses: false)) {
-                xOffset = -textSize * 8
+                xOffset = -390 * 8
             }
         }
         .onChange(of: title) { newValue in
             xOffset = 0
             withAnimation(.linear(duration: 14).repeatForever(autoreverses: false)) {
-                xOffset = -textSize * 8
+                xOffset = -390 * 8
             }
         }
     }
