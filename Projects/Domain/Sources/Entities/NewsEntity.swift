@@ -17,7 +17,9 @@ public struct NewsEntity: Identifiable {
     public let summary: String
     public let content: String
     public let image: String
-    public let font: Font
+    public let font: WritingFont
+    public let fakeFont: Font
+    public let trueFont: Font
     
     public init(
         id: Int,
@@ -26,7 +28,7 @@ public struct NewsEntity: Identifiable {
         summary: String,
         content: String,
         image: String,
-        font: Font = WritingFont.allCases.shuffled()[0].font
+        font: WritingFont = WritingFont.allCases.shuffled()[0]
     ) {
         self.id = id
         self.title = title
@@ -35,6 +37,8 @@ public struct NewsEntity: Identifiable {
         self.content = content
         self.image = image
         self.font = font
+        self.fakeFont = font.font
+        self.trueFont = font.trueFont
     }
 }
 
@@ -74,6 +78,23 @@ extension NewsEntity {
                 return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 24)
             case .blackB04:
                 return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 32)
+            }
+        }
+        
+        public var trueFont: Font {
+            switch self {
+            case .blackR01:
+                return DSKitFontFamily.Eulyoo1945.regular.swiftUIFont(size: 12)
+            case .blackR02:
+                return DSKitFontFamily.Eulyoo1945.regular.swiftUIFont(size: 19)
+            case .blackB01:
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 12)
+            case .blackB02:
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 15)
+            case .blackB03:
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 19)
+            case .blackB04:
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 27)
             }
         }
     }
