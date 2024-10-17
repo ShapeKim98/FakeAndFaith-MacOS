@@ -35,6 +35,9 @@ struct RootFeature {
             case .mainDetail(.delegate(.showMain)):
                 state = .main(.init())
                 return .none
+            case .mainDetail(.delegate(.aboutButtonTapped)):
+                state = .main(.init())
+                return .send(.main(.delegate(.aboutButtonTapped)))
             case .main, .mainDetail:
                 return .none
             }

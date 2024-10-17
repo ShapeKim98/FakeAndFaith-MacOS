@@ -38,12 +38,13 @@ public struct MainView: View {
             }
             .background(.black)
             .navigationBar {
-                store.send(.aboutButtonTapped(proxy), animation: .default)
+                store.send(.aboutButtonTapped, animation: .default)
             } videoButtonAction: {
                 store.send(.videoButtonTapped)
             } noticeView: {
                 EmptyView()
             }
+            .onAppear { store.send(.onAppear(proxy)) }
         }
     }
     

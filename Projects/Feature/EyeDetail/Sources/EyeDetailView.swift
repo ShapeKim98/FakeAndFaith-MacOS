@@ -65,12 +65,14 @@ public struct EyeDetailView: View {
             .font(.eulyoo1945.semiBold.swiftUIFont(size: 52))
             .foregroundStyle(textColor)
             .multilineTextAlignment(.leading)
+            .lineSpacing(8)
             .padding(.bottom, 48)
             
             Text(store.news.summary)
                 .font(.eulyoo1945.semiBold.swiftUIFont(size: 32))
                 .foregroundStyle(textColor)
                 .multilineTextAlignment(.leading)
+                .lineSpacing(8)
             
             Spacer()
         }
@@ -85,6 +87,7 @@ public struct EyeDetailView: View {
                             .font(.eulyoo1945.regular.swiftUIFont(size: 16))
                             .foregroundStyle(textColor)
                             .multilineTextAlignment(.leading)
+                            .lineSpacing(8)
                         
                         Spacer()
                     }
@@ -121,7 +124,7 @@ public struct EyeDetailView: View {
                 animation: .smooth(duration: 1.5)
             )
         } label: {
-            Text("fake")
+            Text(store.isFake ? "fake" : "faith")
                 .font(.minionPro.bold.swiftUIFont(size: 16))
                 .foregroundStyle(backgroundColor)
                 .padding(.vertical, 8)

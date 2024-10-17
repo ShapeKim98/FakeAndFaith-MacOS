@@ -83,6 +83,7 @@ public struct MainDetailFeature {
         
         public enum Delegate {
             case showMain
+            case aboutButtonTapped
         }
     }
     
@@ -119,7 +120,7 @@ public struct MainDetailFeature {
                 state.currentPage = .none
                 return .none
             case .aboutButtonTapped:
-                return .none
+                return .send(.delegate(.aboutButtonTapped))
             case .videoButtonTapped:
                 guard let url = URL(string: "https://www.youtube.com/watch?v=XNWM_h8i6is") else {
                     return .none
