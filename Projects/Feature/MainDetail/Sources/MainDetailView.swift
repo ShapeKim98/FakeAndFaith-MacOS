@@ -30,6 +30,12 @@ public struct MainDetailView: View {
                     VStack {
                         Spacer()
                         
+                        Text("눈/귀/손을 각각 눌러 체험해보세요")
+                            .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                            .foregroundStyle(.main)
+                            .padding(.vertical, 4.5)
+                            .padding(.bottom, 76)
+                        
                         buttons
                         
                         Spacer()
