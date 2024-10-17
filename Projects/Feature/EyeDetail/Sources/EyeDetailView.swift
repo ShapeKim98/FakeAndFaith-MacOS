@@ -29,6 +29,7 @@ public struct EyeDetailView: View {
                         .padding(.trailing, width / 24)
                     
                     title
+                        .frame(width: width * 0.2, alignment: .leading)
                         .padding(.trailing, width / 34)
                     
                     description
@@ -39,7 +40,7 @@ public struct EyeDetailView: View {
                     closeButton
                         .padding(.trailing, width / 15)
                 }
-                .background(.main)
+                .background(backgroundColor)
                 .ignoresSafeArea()
             }
         }
@@ -53,16 +54,22 @@ public struct EyeDetailView: View {
     
     private var title: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(store.news.title)
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 52))
-                .foregroundStyle(.black)
-                .multilineTextAlignment(.leading)
+            fakeToggleButton
+                .padding(.bottom, 16)
                 .padding(.top, 120)
-                .padding(.bottom, 48)
+            
+            Text(store.isFake
+                 ? store.news.title
+                 : store.news.truth
+            )
+            .font(.eulyoo1945.semiBold.swiftUIFont(size: 52))
+            .foregroundStyle(textColor)
+            .multilineTextAlignment(.leading)
+            .padding(.bottom, 48)
             
             Text(store.news.summary)
                 .font(.eulyoo1945.semiBold.swiftUIFont(size: 32))
-                .foregroundStyle(.black)
+                .foregroundStyle(textColor)
                 .multilineTextAlignment(.leading)
             
             Spacer()
@@ -76,13 +83,14 @@ public struct EyeDetailView: View {
                     VStack {
                         Text(store.news.content)
                             .font(.eulyoo1945.regular.swiftUIFont(size: 16))
-                            .foregroundStyle(.black)
+                            .foregroundStyle(textColor)
                             .multilineTextAlignment(.leading)
                         
                         Spacer()
                     }
                     .padding(.top, proxy.frame(in: .global).height * 0.4)
                     .padding(.bottom, 150)
+                    .transition(.opacity)
                 }
             }
         }
@@ -95,14 +103,56 @@ public struct EyeDetailView: View {
             } label: {
                 Image.xIcon
                     .resizable()
+                    .renderingMode(.template)
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 40, height: 40)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(textColor)
             }
             
             Spacer()
         }
         .padding(.top, 60)
+    }
+    
+    private var fakeToggleButton: some View {
+        Button {
+            store.send(
+                .fakeToggleButtonTapped,
+                animation: .smooth(duration: 1.5)
+            )
+        } label: {
+            Text("fake")
+                .font(.minionPro.bold.swiftUIFont(size: 16))
+                .foregroundStyle(backgroundColor)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 22)
+                .background {
+                    RoundedRectangle(
+                        cornerRadius: 30,
+                        style: .continuous
+                    )
+                    .fill(textColor)
+                    
+                }
+        }
+        .padding(.vertical, 4)
+        .padding(.leading, store.isFake ? 4 : 32)
+        .padding(.trailing, store.isFake ? 32 : 4)
+        .background {
+            RoundedRectangle(
+                cornerRadius: 30,
+                style: .continuous
+            )
+            .stroke(textColor, lineWidth: 2)
+        }
+    }
+    
+    private var textColor: Color {
+        store.isFake ? .black : .main
+    }
+    
+    private var backgroundColor: Color {
+        store.isFake ? .main : .black
     }
 }
 
