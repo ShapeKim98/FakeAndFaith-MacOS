@@ -35,7 +35,26 @@ public struct MainDetailView: View {
                         Spacer()
                     }
                 } else {
-                    content
+                    VStack(spacing: 0) {
+                        buttons
+                            .padding(.top, 30)
+                        
+                        title
+                        
+                        if store.currentPage == .hand {
+                            HStack(spacing: 24) {
+                                writingTextField
+                                
+                                writingSubmitButton
+                            }
+                        }
+                        
+                        if store.currentPage == .ear {
+                            playWritingButton
+                        }
+                        
+                        content
+                    }
                 }
             }
             .fadeAnimation(delay: 0.5)
@@ -71,28 +90,11 @@ public struct MainDetailView: View {
     private var content: some View {
         ScrollView {
             VStack(spacing: 0) {
-                buttons
-                
-                title
-                
-                if store.currentPage == .hand {
-                    HStack(spacing: 24) {
-                        writingTextField
-                        
-                        writingSubmitButton
-                    }
-                }
-                
-                if store.currentPage == .ear {
-                    playWritingButton
-                }
-                
                 writingGrid
                 
                 Spacer()
             }
         }
-        .padding(.top, 30)
     }
     
     private var title: some View {
