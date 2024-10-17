@@ -262,12 +262,12 @@ public struct MainDetailView: View {
             
             Text("진실은 바라보기 불편합니다")
                 .font(.minionPro.bold.swiftUIFont(size: 16))
-                .foregroundStyle(.main)
+                .foregroundStyle(store.isFakeEyeDetail ? .main : .black)
                 .padding(.vertical, 12)
             
             Spacer()
         }
-        .background(.black)
+        .background(store.isFakeEyeDetail ? .black : .main)
     }
 }
 

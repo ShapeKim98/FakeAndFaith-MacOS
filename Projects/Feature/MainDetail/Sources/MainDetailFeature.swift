@@ -44,6 +44,7 @@ public struct MainDetailFeature {
         var isPlayingTTSText: Bool = false
         var playingTask: Task<Void, Never>?
         var currentWritingId: Int?
+        var isFakeEyeDetail: Bool = true
         
         @Presents
         var eyeDetail: EyeDetailFeature.State?
@@ -156,12 +157,16 @@ public struct MainDetailFeature {
             case .writingSubmitButtonTapped:
                 return updateHandNewsList(state: &state)
             case .closeEyeDetail:
+                state.isFakeEyeDetail = true
                 state.eyeDetail = nil
                 return .none
             case .delegate:
                 return .none
             case .eyeDetail(.delegate(.close)):
                 return .send(.closeEyeDetail)
+            case let .eyeDetail(.delegate(.fakeToggleButtonTapped(isFake))):
+                state.isFakeEyeDetail = isFake
+                return .none
             case .eyeDetail:
                 return .none
             case .playTTS:

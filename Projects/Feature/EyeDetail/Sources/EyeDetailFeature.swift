@@ -15,6 +15,7 @@ public struct EyeDetailFeature {
     @ObservableState
     public struct State {
         var news: NewsEntity
+        var isFake: Bool = true
         
         public init(news:  NewsEntity) {
             self.news = news
@@ -23,9 +24,11 @@ public struct EyeDetailFeature {
     
     public enum Action {
         case closeButtonTapped
+        case fakeToggleButtonTapped
         case delegate(Delegate)
         public enum Delegate {
             case close
+            case fakeToggleButtonTapped(Bool)
         }
     }
     
@@ -34,6 +37,12 @@ public struct EyeDetailFeature {
             switch action {
             case .closeButtonTapped:
                 return .send(.delegate(.close), animation: .smooth)
+            case .fakeToggleButtonTapped:
+                state.isFake.toggle()
+                return .send(
+                    .delegate(.fakeToggleButtonTapped(state.isFake)),
+                    animation: .smooth(duration: 1.5)
+                )
             case .delegate:
                 return .none
                 
