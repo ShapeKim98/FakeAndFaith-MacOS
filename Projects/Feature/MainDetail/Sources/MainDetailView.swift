@@ -70,9 +70,10 @@ public struct MainDetailView: View {
     
     private var content: some View {
         ScrollView {
-            VStack {
-                
+            VStack(spacing: 0) {
                 buttons
+                
+                title
                 
                 if store.currentPage == .hand {
                     HStack(spacing: 24) {
@@ -80,12 +81,10 @@ public struct MainDetailView: View {
                         
                         writingSubmitButton
                     }
-                    .padding(.top, 65)
                 }
                 
                 if store.currentPage == .ear {
                     playWritingButton
-                        .padding(.top, 65)
                 }
                 
                 writingGrid
@@ -93,7 +92,20 @@ public struct MainDetailView: View {
                 Spacer()
             }
         }
-        .padding(.top, 196)
+        .padding(.top, 30)
+    }
+    
+    private var title: some View {
+        return Group {
+            Text(titleText)
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                .lineSpacing(8)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.main)
+                .padding(.top, 40)
+            
+            Spacer(minLength: 100)
+        }
     }
     
     private var buttons: some View {
@@ -220,19 +232,24 @@ public struct MainDetailView: View {
     }
     
     private var writingTextField: some View {
-        TextField("", text: $store.writingContentText)
-            .frame(width: 800, height: 40)
-            .background {
-                Rectangle()
-                    .stroke(.main, lineWidth: 2)
-            }
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
-            .font(.minionPro.regular.swiftUIFont(size: 20))
-            .foregroundStyle(.main)
-            .onSubmit {
-                store.send(.writingSubmitButtonTapped)
-            }
+        TextField(text: $store.writingContentText) {
+            Text("글을 작성해주세요")
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                .foregroundStyle(.main.opacity(0.3))
+        }
+        .padding(8)
+        .background {
+            Rectangle()
+                .stroke(.main, lineWidth: 2)
+        }
+        .frame(width: 800, height: 40)
+        .autocorrectionDisabled()
+        .textInputAutocapitalization(.never)
+        .font(.minionPro.regular.swiftUIFont(size: 20))
+        .foregroundStyle(.main)
+        .onSubmit {
+            store.send(.writingSubmitButtonTapped)
+        }
     }
     
     private var writingSubmitButton: some View {
@@ -275,6 +292,19 @@ public struct MainDetailView: View {
             Spacer()
         }
         .background(store.isFakeEyeDetail ? .black : .main)
+    }
+    
+    private var titleText: String {
+        switch store.currentPage {
+        case .eye:
+            return "눈을 움직여 진짜 제목을 확인하세요\n기사는 제목을 누르면 확인할 수 있습니다"
+        case .ear:
+            return "제목을 눌러 기사의 내용을 들어보세요\n진짜 제목은 무엇일까요?"
+        case .hand:
+            return "우리도 기사를 쓸 수 있습니다\n그러나 디지털 시대에 글은 지워지지 않습니다"
+        case .none:
+            return ""
+        }
     }
 }
 
