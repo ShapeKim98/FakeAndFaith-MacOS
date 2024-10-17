@@ -177,23 +177,30 @@ public struct MainDetailView: View {
             ZStack(alignment: .topLeading) {
                 let isPlayingTTS = store.currentWritingId != nil
                 let isPlaying = store.currentWritingId == news.id
-                let playingColor: Color = isPlaying ? .main : .main.opacity(0.5)
+                let playingColor: Color = isPlaying ? .main : .main.opacity(0.3)
                 
-                Button(action: { store.send(.fakeWritingButtonTapped(news), animation: .smooth) }) {
+                Button {
+                    store.send(
+                        .fakeWritingButtonTapped(news),
+                        animation: .smooth
+                    )
+                } label: {
                     NewsCell(
                         news: news,
-                        isFake: true
+                        isFake: !isPlaying
                     )
                     .foregroundStyle(isPlayingTTS ? playingColor : .main)
+                    .animation(.smooth(duration: 2), value: isPlaying)
                 }
                 .disabled(store.currentPage == .hand)
                 
-                NewsCell(news: news)
-                    .foregroundStyle(.black)
-                    .allowsHitTesting(false)
-                    .frame(width: 460)
+                if store.currentPage == .eye {
+                    NewsCell(news: news)
+                        .foregroundStyle(.black)
+                        .allowsHitTesting(false)
+                }
             }
-            .frame(width: 460)
+            .frame(width: 460, alignment: .leading)
             .transition(.opacity)
             .animation(.smooth, value: store.currentPage)
         }
