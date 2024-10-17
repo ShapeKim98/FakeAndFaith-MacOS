@@ -53,6 +53,7 @@ public struct MainView: View {
                 .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
                 .foregroundStyle(.main)
                 .multilineTextAlignment(.leading)
+                .lineSpacing(8)
             
             Spacer(minLength: 210)
             
@@ -63,10 +64,11 @@ public struct MainView: View {
             
             Spacer(minLength: 210)
             
-            Text("확증편향\n 디지털 전시")
+            Text("신앙심\n인터렉션 웹사이트")
                 .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
                 .foregroundStyle(.main)
                 .multilineTextAlignment(.trailing)
+                .lineSpacing(8)
         
         }
         .padding(.horizontal, 100)
@@ -78,7 +80,7 @@ public struct MainView: View {
             store.send(.enterButtonTapped)
         } label: {
             HStack(spacing: 12) {
-                Text("입장하기")
+                Text("체험하러 가기")
                     .font(.eulyoo1945.semiBold.swiftUIFont(size: 32))
                     .foregroundStyle(.black)
                 

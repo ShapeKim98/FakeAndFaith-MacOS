@@ -72,22 +72,23 @@ struct NavigationBarModifier<T: View>: ViewModifier {
         Button {
             backButtonAction?()
         } label: {
-            Text("BACK")
-                .font(.minionPro.bold.swiftUIFont(size: 16))
+            Text("뒤로가기")
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: 16))
         }
     }
     
     private var title: some View {
-        Text("FAKE and FAITH")
+        Text("FAKE AND FAITH")
             .font(.minionPro.bold.swiftUIFont(size: 36))
+            .foregroundStyle(.white)
     }
     
     private var aboutButton: some View {
         Button {
             aboutButtonAction?()
         } label: {
-            Text("ABOUT")
-                .font(.minionPro.bold.swiftUIFont(size: 16))
+            Text("신앙심에 대하여")
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: 16))
         }
     }
     
@@ -95,8 +96,8 @@ struct NavigationBarModifier<T: View>: ViewModifier {
         Button {
             videoButtonAction?()
         } label: {
-            Text("VIDEO")
-                .font(.minionPro.bold.swiftUIFont(size: 16))
+            Text("메인영상")
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: 16))
         }
     }
 }
