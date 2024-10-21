@@ -11,6 +11,9 @@ import Domain
 import DSKit
 
 public struct EyeDetailView: View {
+    @Environment(\.device)
+    private var device
+    
     private let store: StoreOf<EyeDetailFeature>
     
     public init(store: StoreOf<EyeDetailFeature>) {
@@ -22,28 +25,59 @@ public struct EyeDetailView: View {
             let width = proxy.frame(in: .global).width
             
             WithPerceptionTracking {
-                HStack(spacing: 0) {
-                    people
-                        .frame(width: width * 0.4)
-                        .clipped()
-                        .padding(.trailing, width / 24)
-                    
-                    title
-                        .frame(width: width * 0.2, alignment: .leading)
-                        .padding(.trailing, width / 34)
-                    
-                    description
-                        .padding(.trailing, width / 27)
-                    
-                    Spacer()
-                    
-                    closeButton
-                        .padding(.trailing, width / 15)
+                Group {
+                    if device.isPhone {
+                        iPhoneContent
+                    } else {
+                        iPadContent(width: width)
+                    }
                 }
-                .background(backgroundColor)
-                .ignoresSafeArea()
             }
         }
+    }
+    
+    private var iPhoneContent: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                people
+                    .frame(height: 300)
+                    .clipped()
+                
+                title
+                    .padding(.horizontal, 20)
+                
+                iPhoneDescripiton
+                    .padding(.horizontal, 20)
+                
+                Spacer()
+            }
+        }
+        .background(backgroundColor)
+        .ignoresSafeArea()
+    }
+    
+    @ViewBuilder
+    private func iPadContent(width: CGFloat) -> some View {
+        HStack(spacing: 0) {
+            people
+                .frame(width: width * 0.4)
+                .clipped()
+                .padding(.trailing, width / 24)
+            
+            title
+                .frame(width: width * 0.2, alignment: .leading)
+                .padding(.trailing, width / 34)
+            
+            iPadDescription
+                .padding(.trailing, width / 27)
+            
+            Spacer()
+            
+            closeButton
+                .padding(.trailing, width / 15)
+        }
+        .background(backgroundColor)
+        .ignoresSafeArea()
     }
     
     private var people: some View {
@@ -54,31 +88,55 @@ public struct EyeDetailView: View {
     
     private var title: some View {
         VStack(alignment: .leading, spacing: 0) {
-            fakeToggleButton
-                .padding(.bottom, 16)
-                .padding(.top, 120)
+            HStack(alignment: .center) {
+                fakeToggleButton
+                
+                if device.isPhone {
+                    Spacer()
+                    
+                    closeButton
+                }
+            }
+            .padding(.top, device.isPhone ? 24 : 120)
+            .padding(.bottom, 16)
             
             Text(store.isFake
                  ? store.news.title
                  : store.news.truth
             )
-            .font(.eulyoo1945.semiBold.swiftUIFont(size: 52))
+            .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 32 : 52))
             .foregroundStyle(textColor)
             .multilineTextAlignment(.leading)
             .lineSpacing(8)
             .padding(.bottom, 48)
             
             Text(store.news.summary)
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 32))
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 20 : 32))
+                .foregroundStyle(textColor)
+                .multilineTextAlignment(.leading)
+                .lineSpacing(8)
+            
+            if !device.isPhone {
+                Spacer()
+            }
+        }
+    }
+    
+    private var iPhoneDescripiton: some View {
+        VStack {
+            Text(store.news.content)
+                .font(.eulyoo1945.regular.swiftUIFont(size: 16))
                 .foregroundStyle(textColor)
                 .multilineTextAlignment(.leading)
                 .lineSpacing(8)
             
             Spacer()
         }
+        .padding(.top, 40)
+        .transition(.opacity)
     }
     
-    private var description: some View {
+    private var iPadDescription: some View {
         GeometryReader { proxy in
             WithPerceptionTracking {
                 ScrollView(showsIndicators: false) {
@@ -91,7 +149,7 @@ public struct EyeDetailView: View {
                         
                         Spacer()
                     }
-                    .padding(.top, proxy.frame(in: .global).height * 0.4)
+                    .padding(.top, device.isPhone ? 40 : proxy.frame(in: .global).height * 0.4)
                     .padding(.bottom, 150)
                     .transition(.opacity)
                 }
@@ -108,13 +166,18 @@ public struct EyeDetailView: View {
                     .resizable()
                     .renderingMode(.template)
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 40, height: 40)
+                    .frame(
+                        width: device.isPhone ? 28 : 40,
+                        height: device.isPhone ? 28 : 40
+                    )
                     .foregroundStyle(textColor)
             }
             
-            Spacer()
+            if !device.isPhone {
+                Spacer()
+            }
         }
-        .padding(.top, 60)
+        .padding(.top, device.isPhone ? 0 : 60)
     }
     
     private var fakeToggleButton: some View {
