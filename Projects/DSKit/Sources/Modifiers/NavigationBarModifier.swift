@@ -7,7 +7,12 @@
 
 import SwiftUI
 
+import Util
+
 struct NavigationBarModifier<T: View>: ViewModifier {
+    @Environment(\.device)
+    private var device
+    
     private var backButtonAction: (() -> Void)?
     private var aboutButtonAction: (() -> Void)?
     private var videoButtonAction: (() -> Void)?
@@ -27,45 +32,63 @@ struct NavigationBarModifier<T: View>: ViewModifier {
         }
     
     func body(content: Content) -> some View {
-        VStack(spacing: 0) {
-            VStack(spacing: 0) {
-                HStack {
-                    Spacer()
+        Group {
+            if device.isPhone {
+                VStack(spacing: 0) {
+                    bar
                     
-                    title
+                    content
+                }
+            } else {
+                VStack(spacing: 0) {
+                    bar
                     
-                    Spacer()
+                    content
                 }
-                .overlay {
-                    HStack(spacing: 30) {
-                        if (backButtonAction != nil) {
-                            backButton
-                        }
-                        
-                        Spacer()
-                        
-                        aboutButton
-                        
-                        videoButton
-                    }
-                }
-                .padding(.horizontal, 100)
-                .padding(.vertical, 28)
-                .foregroundStyle(.white)
-                .background(alignment: .bottom) {
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundStyle(.main)
-                }
-                .background(.black)
-                
-                noticeView
+                .ignoresSafeArea()
             }
-            
-            content
         }
-        .ignoresSafeArea()
         .background(.black)
+    }
+    
+    var bar: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Spacer()
+                
+                title
+                
+                Spacer()
+            }
+            .overlay {
+                HStack(spacing: 30) {
+                    if (backButtonAction != nil) {
+                        backButton
+                    } else if device.isPhone {
+                        aboutButton
+                    }
+                    
+                    Spacer()
+                    
+                    if !device.isPhone {
+                        aboutButton
+                    }
+                    
+                    videoButton
+                }
+            }
+            .padding(.horizontal, device.isPhone ? 20 : 100)
+            .padding(.vertical, device.isPhone ? 16 : 28)
+            .foregroundStyle(.white)
+            .background(alignment: .bottom) {
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundStyle(.main)
+            }
+            .background(.black)
+            
+            noticeView
+        }
     }
     
     private var backButton: some View {
@@ -73,13 +96,13 @@ struct NavigationBarModifier<T: View>: ViewModifier {
             backButtonAction?()
         } label: {
             Text("뒤로가기")
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 16))
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 10 : 16))
         }
     }
     
     private var title: some View {
         Text("FAKE AND FAITH")
-            .font(.minionPro.bold.swiftUIFont(size: 36))
+            .font(.minionPro.bold.swiftUIFont(size: device.isPhone ? 16 : 36))
             .foregroundStyle(.white)
     }
     
@@ -88,7 +111,7 @@ struct NavigationBarModifier<T: View>: ViewModifier {
             aboutButtonAction?()
         } label: {
             Text("신앙심에 대하여")
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 16))
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 10 : 16))
         }
     }
     
@@ -97,7 +120,7 @@ struct NavigationBarModifier<T: View>: ViewModifier {
             videoButtonAction?()
         } label: {
             Text("메인영상")
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 16))
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 10 : 16))
         }
     }
 }
