@@ -8,8 +8,12 @@
 import SwiftUI
 import ComposableArchitecture
 import DSKit
+import Util
 
 public struct MainView: View {
+    @Environment(\.device)
+    private var device
+    
     private let store: StoreOf<MainFeature>
     
     public init(store: StoreOf<MainFeature>) {
@@ -44,6 +48,7 @@ public struct MainView: View {
             } noticeView: {
                 EmptyView()
             }
+            
             .onAppear { store.send(.onAppear(proxy)) }
         }
     }
@@ -51,29 +56,47 @@ public struct MainView: View {
     private var title: some View {
         HStack(spacing: 0) {
             Text("2024.10.24\n- 10.31")
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 10 : 24))
                 .foregroundStyle(.main)
                 .multilineTextAlignment(.leading)
                 .lineSpacing(8)
             
-            Spacer(minLength: 210)
+            if device.isPhone {
+                Spacer()
+            } else {
+                Spacer(minLength: 210)
+            }
             
-            Image.logo
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 779)
+            if !device.isPhone {
+                Image.logo
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 779)
+            }
             
-            Spacer(minLength: 210)
+            if device.isPhone {
+                Spacer()
+            } else {
+                Spacer(minLength: 210)
+            }
             
             Text("신앙심\n인터렉션 웹사이트")
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 10 : 24))
                 .foregroundStyle(.main)
                 .multilineTextAlignment(.trailing)
                 .lineSpacing(8)
         
         }
-        .padding(.horizontal, 100)
-        .padding(.top, 240)
+        .padding(.horizontal, device.isPhone ? 20 : 100)
+        .padding(.top, device.isPhone ? 72 : 240)
+        .overlay(alignment: .bottom) {
+            if device.isPhone {
+                Image.logo
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 150)
+            }
+        }
     }
     
     private var enterButton: some View {
@@ -82,23 +105,24 @@ public struct MainView: View {
         } label: {
             HStack(spacing: 12) {
                 Text("체험하러 가기")
-                    .font(.eulyoo1945.semiBold.swiftUIFont(size: 32))
+                    .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 14 : 32))
                     .foregroundStyle(.black)
+                    .frame(height: device.isPhone ? 35 : nil)
                 
                 Image.arrowRightIcon
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 72)
+                    .frame(maxWidth: device.isPhone ? 24 : 72)
             }
-            .padding(.vertical, 24)
-            .padding(.horizontal, 36)
+            .padding(.vertical, device.isPhone ? 8 : 24)
+            .padding(.horizontal, device.isPhone ? 20 : 36)
             .background {
                 RoundedRectangle(cornerRadius: 53, style: /*@START_MENU_TOKEN@*/.continuous/*@END_MENU_TOKEN@*/)
                     .foregroundStyle(.main)
             }
         }
-        .padding(.top, 104)
-        .padding(.bottom, 40)
+        .padding(.top, device.isPhone ? 72 : 104)
+        .padding(.bottom, device.isPhone ? 0 : 40)
     }
     
     private var about: some View {
@@ -116,25 +140,26 @@ public struct MainView: View {
                             blue: 0.32)
                     ]),
                 startPoint: .top,
-                endPoint: .bottom)
-            .frame(height: 400)
+                endPoint: .bottom
+            )
+            .frame(height: device.isPhone ? 92 : 400)
             
             HStack {
                 Spacer()
                 
-                VStack(spacing: 48) {
+                VStack(spacing: device.isPhone ? 42 : 48) {
                     Text("ABOUT")
-                        .font(.minionPro.bold.swiftUIFont(size: 24))
+                        .font(.minionPro.bold.swiftUIFont(size: device.isPhone ? 10 : 24))
                     
                     Text("FAKE and FAITH")
-                        .font(.minionPro.bold.swiftUIFont(size: 64))
+                        .font(.minionPro.bold.swiftUIFont(size: device.isPhone ? 32 : 64))
                 }
                 .foregroundStyle(.black)
                 
                 Spacer()
             }
-            .padding(.top, 198)
-            .padding(.bottom, 260)
+            .padding(.top, device.isPhone ? 32 : 198)
+            .padding(.bottom, device.isPhone ? 72 : 260)
             .background {
                 Rectangle()
                     .foregroundStyle(.main)
@@ -147,17 +172,22 @@ public struct MainView: View {
         HStack {
             Spacer()
             
-            Text("""
-디지털 시대에 가짜뉴스를 식별하고 대응하는 능력은 매우 중요한 기술이 되었습\n니다. 가짜뉴스에 대한 분별력과 수용 반응을 테스트하기 위해 특별한 디지털 행\n사를 개최하였습니다. 신:앙심은 참가자들에게 실시간으로 가짜뉴스를 식별하고\n 그에 대한 반응을 측정하는 기회를 제공합니다. 따라서 개인별로 자신의 확증편향\n 정도를 파악할 수 있고,  이에 대한 경각심을 가질 수 있도록 도와줍니다.
-""")
-            .font(.eulyoo1945.regular.swiftUIFont(size: 16))
+            Text(!device.isPhone
+            ? """
+            디지털 시대에 가짜뉴스를 식별하고 대응하는 능력은 매우 중요한 기술이 되었습\n니다. 가짜뉴스에 대한 분별력과 수용 반응을 테스트하기 위해 특별한 디지털 행\n사를 개최하였습니다. 신:앙심은 참가자들에게 실시간으로 가짜뉴스를 식별하고\n 그에 대한 반응을 측정하는 기회를 제공합니다. 따라서 개인별로 자신의 확증편향\n 정도를 파악할 수 있고,  이에 대한 경각심을 가질 수 있도록 도와줍니다.
+            """
+            : """
+            디지털 시대에 가짜뉴스를 식별하고 대응하는 능력은 매우 중요한 기술이 되었습니다. 가짜뉴스에 대한 분별력과 수용 반응을 테스트하기 위해 특별한 디지털 행사를 개최하였습니다. 신:앙심은 참가자들에게 실시간으로 가짜뉴스를 식별하고 그에 대한 반응을 측정하는 기회를 제공합니다. 따라서 개인별로 자신의 확증편향 정도를 파악할 수 있고,  이에 대한 경각심을 가질 수 있도록 도와줍니다.
+            """
+            )
+            .font(.eulyoo1945.regular.swiftUIFont(size: device.isPhone ? 12 : 16))
             .foregroundStyle(.main)
             .multilineTextAlignment(.center)
             .lineSpacing(8)
             
             Spacer()
         }
-        .padding(.vertical, 204)
+        .padding(.vertical, device.isPhone ? 100 : 204)
     }
     
     private var images: some View {
@@ -199,32 +229,49 @@ public struct MainView: View {
     ) -> some View {
         Button(action: action) {
             VStack {
-                Spacer(minLength: 280)
+                if !device.isPhone {
+                    Spacer(minLength: 280)
+                }
                 
                 HStack {
                     Spacer()
                     
                     Text(title)
-                        .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                        .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 10 : 24))
                     
                     Spacer()
                 }
                 .foregroundStyle(titleColor)
+                .padding(.top, device.isPhone ? 84 : 0)
                 
-                Spacer(minLength: 580)
+                if device.isPhone {
+                    Spacer()
+                } else {
+                    Spacer(minLength: 580)
+                }
                 
                 HStack {
                     Spacer()
                     
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(minHeight: 200, maxHeight: 261)
+                    if device.isPhone {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 50)
+                    } else {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(minHeight: 200, maxHeight: 261)
+                    }
                     
                     Spacer()
                 }
+                .padding(.bottom, device.isPhone ? 40 : 0)
                 
-                Spacer(minLength: 180)
+                if !device.isPhone {
+                    Spacer(minLength: 180)
+                }
             }
         }
     }
