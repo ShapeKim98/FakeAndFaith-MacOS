@@ -11,6 +11,9 @@ import Util
 import Perception
 
 struct NoticeView: View {
+    @Environment(\.device)
+    private var device
+    
     @Binding var title: String
     
     @State private var xOffset: CGFloat = 0
@@ -39,7 +42,7 @@ struct NoticeView: View {
                     Text("\(title) / ")
                 }
             }
-            .font(.minionPro.bold.swiftUIFont(size: 16))
+            .font(.minionPro.bold.swiftUIFont(size: device.isPhone ? 12 : 16))
             .foregroundStyle(.black)
             .padding(.vertical, 12)
             .offset(x: xOffset)

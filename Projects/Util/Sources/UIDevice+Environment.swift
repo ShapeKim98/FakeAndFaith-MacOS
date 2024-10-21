@@ -11,6 +11,8 @@ public struct DeviceProvider {
     private let device = UIDevice.current.userInterfaceIdiom
     
     public var isPhone: Bool { device == .phone }
+    
+    public init() { }
 }
 
 extension DeviceProvider: EnvironmentKey {

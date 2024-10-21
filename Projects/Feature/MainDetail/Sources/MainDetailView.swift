@@ -12,9 +12,13 @@ import WaterfallGrid
 import FeatureEyeDetail
 import DSKit
 import Domain
+import Util
 
 public struct MainDetailView: View {
     @Namespace private var heroAnimation
+    
+    @Environment(\.device)
+    private var device
     
     @Perception.Bindable
     private var store: StoreOf<MainDetailFeature>
@@ -27,16 +31,17 @@ public struct MainDetailView: View {
         WithPerceptionTracking {
             Group {
                 if store.currentPage == .none {
-                    VStack {
+                    VStack(spacing: 0) {
                         Spacer()
                         
                         Text("눈/귀/손을 각각 눌러 체험해보세요")
-                            .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                            .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 16 : 24))
                             .foregroundStyle(.main)
                             .padding(.vertical, 4.5)
-                            .padding(.bottom, 76)
+                            .padding(.bottom, device.isPhone ? 32 : 76)
                         
                         buttons
+                            .padding(.bottom, device.isPhone ? 100 : 0)
                         
                         Spacer()
                     }
@@ -46,17 +51,21 @@ public struct MainDetailView: View {
                             .padding(.top, 30)
                         
                         title
+                            .padding(.bottom, device.isPhone ? 40 : 100)
                         
                         if store.currentPage == .hand {
-                            HStack(spacing: 24) {
+                            HStack(spacing: device.isPhone ? 12 : 24) {
                                 writingTextField
                                 
                                 writingSubmitButton
                             }
+                            .padding(.bottom, device.isPhone ? 40 : 100)
+                            .padding(.horizontal, device.isPhone ? 20 : 0)
                         }
                         
                         if store.currentPage == .ear {
                             playWritingButton
+                                .padding(.bottom, device.isPhone ? 40 : 100)
                         }
                         
                         content
@@ -106,18 +115,16 @@ public struct MainDetailView: View {
     private var title: some View {
         return Group {
             Text(titleText)
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 16 : 24))
                 .lineSpacing(8)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.main)
                 .padding(.top, 40)
-            
-            Spacer(minLength: 100)
         }
     }
     
     private var buttons: some View {
-        HStack(spacing: 96) {
+        HStack(spacing: device.isPhone ? 60 : 96) {
             Spacer()
             
             button(page: .eye) {
@@ -147,7 +154,10 @@ public struct MainDetailView: View {
             Button(action: action) {
                 VStack {
                     Circle()
-                        .frame(width: 16, height: 16)
+                        .frame(
+                            width: device.isPhone ? 8 : 16,
+                            height: device.isPhone ? 8 : 16
+                        )
                         .foregroundStyle(.main)
                         .opacity(isSelected ? 1 : 0)
                     
@@ -169,7 +179,7 @@ public struct MainDetailView: View {
                             Image.eyeSymbol
                         }
                     }
-                    .frame(height: 100)
+                    .frame(height: device.isPhone ? 56 : 100)
                     .opacity((isSelected || store.currentPage == .none) ? 1 : 0.2)
                 }
             }
@@ -179,7 +189,7 @@ public struct MainDetailView: View {
         Image.eyeIcon
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .frame(width: 350)
+            .frame(width: device.isPhone ? 200 : 350)
             .gesture(
                 DragGesture()
                     .onChanged({ dragValue in
@@ -220,29 +230,29 @@ public struct MainDetailView: View {
                         .allowsHitTesting(false)
                 }
             }
-            .frame(width: 460, alignment: .leading)
+            .frame(width: device.isPhone ? nil : 460, alignment: .leading)
             .transition(.opacity)
             .animation(.smooth, value: store.currentPage)
         }
         .gridStyle(
-            columns: 3,
-            spacing: 56,
+            columns: device.isPhone ? 1 : 3,
+            spacing: device.isPhone ? 20 : 56,
             animation: nil
         )
         .scrollOptions(direction: .vertical)
-        .padding(.top, 77)
+        .padding(.top, device.isPhone ? 0 : 77)
         .background(alignment: .topLeading) {
             if store.currentPage == .eye {
                 eye
             }
         }
-        .padding(.horizontal, 200)
+        .padding(.horizontal, device.isPhone ? 20 : 200)
     }
     
     private var writingTextField: some View {
         TextField(text: $store.writingContentText) {
             Text("글을 작성해주세요")
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: 24))
+                .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 16 : 24))
                 .foregroundStyle(.main.opacity(0.3))
         }
         .padding(8)
@@ -250,7 +260,7 @@ public struct MainDetailView: View {
             Rectangle()
                 .stroke(.main, lineWidth: 2)
         }
-        .frame(width: 800, height: 40)
+        .frame(width: device.isPhone ? nil : 800, height: 40)
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
         .font(.minionPro.regular.swiftUIFont(size: 20))
@@ -279,10 +289,17 @@ public struct MainDetailView: View {
                 if store.isPlayingTTSText {
                     Image.pauseIcon
                         .resizable()
-                        .frame(width: 40, height: 40)
+                        .frame(
+                            width: device.isPhone ? 28 : 40,
+                            height: device.isPhone ? 28 : 40
+                        )
                 } else {
                     Image.playIcon
-                        .frame(width: 40, height: 40)
+                        .resizable()
+                        .frame(
+                            width: device.isPhone ? 28 : 40,
+                            height: device.isPhone ? 28 : 40
+                        )
                 }
             }
         }

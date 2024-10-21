@@ -9,6 +9,7 @@ import SwiftUI
 
 import CoreKit
 import DSKit
+import Util
 
 public struct NewsEntity: Identifiable {
     public let id: Int
@@ -61,19 +62,21 @@ extension NewsEntity {
         case blackB04
         
         public var font: Font {
+            let isPhone = DeviceProvider().isPhone
+            
             switch self {
             case .blackR01:
-                return DSKitFontFamily.Eulyoo1945.regular.swiftUIFont(size: 14)
+                return DSKitFontFamily.Eulyoo1945.regular.swiftUIFont(size: isPhone ? 10 : 14)
             case .blackR02:
-                return DSKitFontFamily.Eulyoo1945.regular.swiftUIFont(size: 24)
+                return DSKitFontFamily.Eulyoo1945.regular.swiftUIFont(size: isPhone ? 16 : 24)
             case .blackB01:
-                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 14)
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: isPhone ? 10 : 14)
             case .blackB02:
-                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 20)
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: isPhone ? 12 : 20)
             case .blackB03:
-                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 24)
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: isPhone ? 16 : 24)
             case .blackB04:
-                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: 32)
+                return DSKitFontFamily.Eulyoo1945.semiBold.swiftUIFont(size: isPhone ? 24 : 32)
             }
         }
     }
