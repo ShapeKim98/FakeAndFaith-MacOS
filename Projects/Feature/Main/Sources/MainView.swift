@@ -88,15 +88,16 @@ public struct MainView: View {
         
         }
         .padding(.horizontal, device.isPhone ? 20 : 100)
-        .padding(.top, device.isPhone ? 72 : 240)
-        .overlay(alignment: .bottom) {
+        .overlay() {
             if device.isPhone {
                 Image.logo
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: 150)
             }
         }
+        .padding(.top, device.isPhone ? 200 : 240)
+        
     }
     
     private var enterButton: some View {
@@ -142,7 +143,7 @@ public struct MainView: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: device.isPhone ? 92 : 400)
+            .frame(height: device.isPhone ? 200 : 400)
             
             HStack {
                 Spacer()
@@ -159,7 +160,7 @@ public struct MainView: View {
                 Spacer()
             }
             .padding(.top, device.isPhone ? 32 : 198)
-            .padding(.bottom, device.isPhone ? 72 : 260)
+            .padding(.bottom, device.isPhone ? 100 : 260)
             .background {
                 Rectangle()
                     .foregroundStyle(.main)

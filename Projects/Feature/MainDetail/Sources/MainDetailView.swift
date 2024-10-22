@@ -115,10 +115,10 @@ public struct MainDetailView: View {
     private var title: some View {
         return Group {
             Text(titleText)
-                .font(.eulyoo1945.semiBold.swiftUIFont(size: device.isPhone ? 16 : 24))
+                .font(.minionPro.bold.swiftUIFont(size: device.isPhone ? 16 : 24))
                 .lineSpacing(8)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.main)
+                .foregroundStyle(.main.opacity(0.4))
                 .padding(.top, 40)
         }
     }
