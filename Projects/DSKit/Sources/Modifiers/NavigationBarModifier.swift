@@ -64,7 +64,7 @@ struct NavigationBarModifier<T: View>: ViewModifier {
                 HStack(spacing: 30) {
                     if (backButtonAction != nil) {
                         backButton
-                    } else if device.isPhone {
+                    } else if device.isPhone && aboutButtonAction != nil {
                         aboutButton
                     }
                     

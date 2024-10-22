@@ -80,11 +80,10 @@ public struct MainDetailView: View {
                         .transition(.opacity)
                 }
             }
-            .navigationBar {
-                store.send(.backButtonTapped, animation: .smooth(duration: 1.5))
-            } aboutButtonAction: {
-                store.send(.aboutButtonTapped, animation: .smooth(duration: 1.5))
-            } videoButtonAction: {
+            .navigationBar(
+                backButtonAction: store.eyeDetail != nil ? nil : { store.send(.backButtonTapped, animation: .smooth(duration: 1.5)) },
+                aboutButtonAction: device.isPhone ? nil : { store.send(.aboutButtonTapped, animation: .smooth(duration: 1.5)) }
+            ) {
                 store.send(.videoButtonTapped, animation: .smooth(duration: 1.5))
             } noticeView: {
                 Group {
